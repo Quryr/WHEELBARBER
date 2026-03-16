@@ -75,7 +75,7 @@
         }
 
         /* ============================================
-           SPLASH SCREEN
+           SPLASH SCREEN (АНИМИРОВАННЫЙ ЛОГОТИП)
            ============================================ */
         .splash {
             position: fixed;
@@ -102,32 +102,45 @@
             flex-direction: column;
             align-items: center;
             position: relative; 
+            transform: scale(0.65); /* Уменьшаем масштаб на 35% для отступов от краев */
+            animation: splashFloat 3s ease-in-out infinite;
         }
 
-        /* Анимация: раскрытие и закрытие ножниц */
+        /* Плавное парение (без фильтра, чтобы не портить маску) */
+        @keyframes splashFloat {
+            0%, 100% { transform: scale(0.65) translateY(0); }
+            50% { transform: scale(0.68) translateY(-10px); }
+        }
+
+        /* Добавляем неоновое свечение напрямую на SVG */
+        .splash-logo-container svg {
+            filter: drop-shadow(0 0 12px rgba(255, 107, 0, 0.4));
+        }
+
+        /* Анимация: резкое смыкание (снэп) и раскрытие ножниц */
         @keyframes snipA {
-            0%, 100% { transform: rotate(3deg); } /* Слегка приоткрыты */
-            50% { transform: rotate(-11deg); }    /* Мягкое смыкание */
+            0%, 100% { transform: rotate(4deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
+            50% { transform: rotate(-12deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
         }
 
         @keyframes snipB {
-            0%, 100% { transform: rotate(-3deg); } /* Слегка приоткрыты */
-            50% { transform: rotate(11deg); }      /* Мягкое смыкание */
+            0%, 100% { transform: rotate(-4deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
+            50% { transform: rotate(12deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
         }
 
         #pieceA {
             transform-origin: 165px 120px; 
-            animation: snipA 2.5s ease-in-out infinite;
+            animation: snipA 1.8s infinite;
         }
 
         #pieceB {
             transform-origin: 165px 120px;
-            animation: snipB 2.5s ease-in-out infinite;
+            animation: snipB 1.8s infinite;
         }
 
         /* Маска, которая перекрывает нижнее колесо при анимации */
         .splash-text-wrapper {
-            background-color: var(--bg-primary);
+            background-color: var(--bg-primary); /* Сливается с фоном, закрывая SVG */
             position: relative;
             z-index: 10;
             width: 100%;
@@ -140,15 +153,37 @@
             color: var(--orange-bright);
             font-size: 32px;
             letter-spacing: 8px;
-            font-weight: 600;
+            font-weight: 800;
+            margin-left: 8px; /* Выравнивание с учетом letter-spacing */
+            text-shadow: 0 0 20px var(--orange-glow);
         }
 
+        /* Красивая неоновая полоса загрузки */
         .splash-line {
-            width: 120px;
+            width: 140px;
             height: 4px;
-            background: var(--orange-bright);
-            margin: 15px auto 0 auto;
-            border-radius: 2px;
+            background: var(--bg-card);
+            margin: 20px auto 0 auto;
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 10px rgba(255, 107, 0, 0.2);
+        }
+
+        .splash-line::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--orange-bright), transparent);
+            border-radius: 4px;
+            animation: splashLoadAnim 1.5s ease-in-out infinite;
+        }
+
+        @keyframes splashLoadAnim {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(200%); }
         }
 
         /* ============================================
