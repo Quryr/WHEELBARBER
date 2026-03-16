@@ -97,45 +97,58 @@
             visibility: hidden;
         }
 
-        .splash-logo {
-            font-size: 36px;
-            font-weight: 900;
-            color: var(--text-primary);
-            text-shadow: 0 0 40px var(--orange-glow), 0 0 80px rgba(255, 107, 0, 0.15);
-            animation: splashPulse 1.5s ease-in-out infinite;
+        .splash-logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative; 
         }
 
-        .splash-logo span {
-            color: var(--orange);
+        /* Анимация: раскрытие и закрытие ножниц */
+        @keyframes snipA {
+            0%, 100% { transform: rotate(3deg); } /* Слегка приоткрыты */
+            50% { transform: rotate(-11deg); }    /* Мягкое смыкание */
         }
 
-        .splash-loader {
-            margin-top: 24px;
-            width: 40px;
+        @keyframes snipB {
+            0%, 100% { transform: rotate(-3deg); } /* Слегка приоткрыты */
+            50% { transform: rotate(11deg); }      /* Мягкое смыкание */
+        }
+
+        #pieceA {
+            transform-origin: 165px 120px; 
+            animation: snipA 2.5s ease-in-out infinite;
+        }
+
+        #pieceB {
+            transform-origin: 165px 120px;
+            animation: snipB 2.5s ease-in-out infinite;
+        }
+
+        /* Маска, которая перекрывает нижнее колесо при анимации */
+        .splash-text-wrapper {
+            background-color: var(--bg-primary);
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            text-align: center;
+            margin-top: -30px; 
+            padding-top: 5px;  
+        }
+
+        .splash-text {
+            color: var(--orange-bright);
+            font-size: 32px;
+            letter-spacing: 8px;
+            font-weight: 600;
+        }
+
+        .splash-line {
+            width: 120px;
             height: 4px;
-            background: var(--bg-card);
+            background: var(--orange-bright);
+            margin: 15px auto 0 auto;
             border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .splash-loader::after {
-            content: '';
-            display: block;
-            width: 50%;
-            height: 100%;
-            background: var(--orange);
-            border-radius: 2px;
-            animation: splashLoad 1s ease-in-out infinite;
-        }
-
-        @keyframes splashPulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes splashLoad {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(300%); }
         }
 
         /* ============================================
@@ -663,8 +676,8 @@
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            padding-bottom: 8px;
-            margin-bottom: 20px;
+            padding: 15px 5px; /* Added padding to prevent box-shadow clipping */
+            margin: -15px -5px 15px -5px; /* Offset padding to maintain layout */
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
@@ -686,6 +699,10 @@
             cursor: pointer;
             transition: var(--transition);
             white-space: nowrap;
+            /* Fix font jittering / pixelation on click/active */
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
         .filter-btn.active {
@@ -865,7 +882,12 @@
             white-space: nowrap;
         }
 
-        /* Admin Actions for Prices */
+        /* Admin Actions */
+        .admin-actions-inline {
+            display: none;
+            gap: 8px;
+        }
+
         .price-admin-actions {
             display: none;
             gap: 8px;
@@ -876,7 +898,8 @@
             padding-top: 14px;
         }
 
-        body.is-admin .price-admin-actions {
+        body.is-admin .price-admin-actions,
+        body.is-admin .admin-actions-inline {
             display: flex;
         }
 
@@ -889,7 +912,9 @@
             display: flex; align-items: center; justify-content: center;
             cursor: pointer;
             font-size: 16px;
+            transition: var(--transition);
         }
+        .admin-icon-btn:active { transform: scale(0.9); }
         .admin-icon-btn.delete { color: #ff4444; border-color: rgba(255, 68, 68, 0.3); }
 
         .price-note {
@@ -928,12 +953,18 @@
         .district-card {
             display: flex;
             align-items: center;
-            gap: 14px;
+            justify-content: space-between;
             background: var(--bg-card);
             border: 1px solid var(--orange-faint);
             border-radius: var(--radius);
             padding: 18px 20px;
             transition: var(--transition);
+        }
+
+        .district-card-content {
+            display: flex;
+            align-items: center;
+            gap: 14px;
         }
 
         .district-card:active {
@@ -1390,11 +1421,34 @@
 <body>
 
     <!-- ==========================================
-         SPLASH SCREEN
+         SPLASH SCREEN (АНИМИРОВАННЫЙ ЛОГОТИП)
          ========================================== -->
     <div class="splash" id="splash">
-        <div class="splash-logo">Wheel<span>Barber</span></div>
-        <div class="splash-loader"></div>
+        <div class="splash-logo-container">
+            <svg width="360" height="230" viewBox="0 0 360 230"
+                 stroke="var(--orange-bright)" stroke-width="12"
+                 stroke-linecap="round" stroke-linejoin="round" fill="none">
+        
+                <!-- ДЕТАЛЬ 2: Нижнее колесо и Верхнее лезвие -->
+                <g id="pieceB">
+                    <line x1="90" y1="155" x2="315" y2="50" />
+                    <circle cx="110" cy="179" r="35" fill="var(--bg-primary)" />
+                </g>
+        
+                <!-- ДЕТАЛЬ 1: Верхняя голова и Нижнее лезвие -->
+                <g id="pieceA">
+                    <line x1="90" y1="85" x2="165" y2="120" />
+                    <line x1="200" y1="136.3" x2="315" y2="190" />
+                    <circle cx="110" cy="61" r="35" fill="var(--bg-primary)" />
+                </g>
+            </svg>
+        
+            <!-- Блок с текстом и маской для нижнего колеса -->
+            <div class="splash-text-wrapper">
+                <div class="splash-text">WHEELBARBER</div>
+                <div class="splash-line"></div>
+            </div>
+        </div>
     </div>
 
     <!-- ==========================================
@@ -1435,7 +1489,7 @@
                 <a href="https://calendar.app.google/d3LC7DGE1F7FjoW88" class="btn btn-primary book-btn">
                     <i class="ph-fill ph-scissors"></i> Записаться на стрижку
                 </a>
-                <a href="tel:+79000000000" class="btn btn-outline" id="heroCallBtn">
+                <a href="tel:+79000000000" class="btn btn-outline">
                     <i class="ph-fill ph-phone"></i> Позвонить
                 </a>
             </div>
@@ -1560,13 +1614,18 @@
         <!-- BARBER -->
         <section class="section" id="barber">
             <div class="animate-in">
-                <h2 class="section-title">Наш <span>барбер</span></h2>
+                <h2 class="section-title">Наш барбер <span id="barberNameTitle">Анна</span></h2>
             </div>
+            
+            <!-- Admin Add Button -->
+            <button class="admin-add-btn admin-only animate-in" style="margin-bottom: 20px;" onclick="openBarberModal()">
+                <i class="ph-bold ph-pencil-simple"></i> Редактировать профиль
+            </button>
 
             <div class="barber-card animate-in">
                 <div class="barber-avatar"><i class="ph-fill ph-scissors"></i></div>
                 <div class="barber-badge"><i class="ph-fill ph-star"></i> Опыт работы: 3 года</div>
-                <h3 class="barber-name">Мастер мужских стрижек</h3>
+                <h3 class="barber-name" id="barberNameDisplay">Мастер мужских стрижек</h3>
                 <p class="barber-desc">
                     Наш барбер работает с классическими и современными стилями.
                     Каждая стрижка выполняется аккуратно и с вниманием к деталям.
@@ -1643,19 +1702,16 @@
                 <p class="section-subtitle">Мы работаем по районам:</p>
             </div>
 
-            <div class="districts-grid">
-                <div class="district-card animate-in">
-                    <div class="district-pin"><i class="ph-fill ph-map-pin"></i></div>
-                    <div class="district-name">Калининский</div>
-                </div>
-                <div class="district-card animate-in">
-                    <div class="district-pin"><i class="ph-fill ph-map-pin"></i></div>
-                    <div class="district-name">Парковый</div>
-                </div>
-                <div class="district-card animate-in">
-                    <div class="district-pin"><i class="ph-fill ph-map-pin"></i></div>
-                    <div class="district-name">Центральный</div>
-                </div>
+            <!-- Admin Add District Button -->
+            <button class="admin-add-btn admin-only animate-in" id="addDistrictBtn" style="margin-bottom: 20px;" onclick="openDistrictModal()">
+                <i class="ph-bold ph-plus"></i> Добавить район
+            </button>
+
+            <div class="districts-grid" id="districtsGrid">
+                <!-- Skeleton loading -->
+                <div class="skeleton skeleton-row"></div>
+                <div class="skeleton skeleton-row"></div>
+                <div class="skeleton skeleton-row"></div>
             </div>
         </section>
 
@@ -1710,7 +1766,7 @@
                 <a href="https://calendar.app.google/d3LC7DGE1F7FjoW88" class="btn btn-primary book-btn">
                     <i class="ph-fill ph-scissors"></i> Записаться
                 </a>
-                <a href="tel:+79000000000" class="btn btn-outline" id="ctaCallBtn">
+                <a href="tel:+79000000000" class="btn btn-outline">
                     <i class="ph-fill ph-phone"></i> Позвонить
                 </a>
             </div>
@@ -1821,6 +1877,50 @@
         </div>
     </div>
 
+    <!-- ==========================================
+         DISTRICT ADMIN MODAL
+         ========================================== -->
+    <div class="modal-overlay" id="districtModal">
+        <div class="upload-modal">
+            <button class="modal-close" onclick="closeDistrictModal()" style="position:relative; margin-left:auto; margin-bottom:8px;"><i class="ph-bold ph-x"></i></button>
+            <h3 id="districtModalTitle">Добавить <span>район</span></h3>
+            
+            <input type="hidden" id="districtId">
+            
+            <div class="form-group">
+                <label>Название района</label>
+                <input type="text" id="districtNameInput" placeholder="Например: Центральный">
+            </div>
+
+            <button class="btn btn-primary" style="width:100%;" onclick="saveDistrict()" id="districtSubmitBtn">
+                <i class="ph-bold ph-check"></i> Сохранить
+            </button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         BARBER EDIT MODAL (ADMIN ONLY)
+         ========================================== -->
+    <div class="modal-overlay" id="barberModal">
+        <div class="upload-modal">
+            <button class="modal-close" onclick="closeBarberModal()" style="position:relative; margin-left:auto; margin-bottom:8px;"><i class="ph-bold ph-x"></i></button>
+            <h3>Редактировать <span>профиль</span></h3>
+            
+            <div class="form-group">
+                <label>Имя барбера</label>
+                <input type="text" id="barberNameInput" placeholder="Например: Анна">
+            </div>
+
+            <div class="form-group">
+                <label>Должность / Статус</label>
+                <input type="text" id="barberRoleInput" placeholder="Например: Мастер мужских стрижек">
+            </div>
+
+            <button class="btn btn-primary" style="width:100%;" onclick="saveBarberInfo()" id="barberSubmitBtn">
+                <i class="ph-bold ph-check"></i> Сохранить
+            </button>
+        </div>
+    </div>
 
     <!-- ==========================================
          JAVASCRIPT
@@ -1840,6 +1940,19 @@
             { name: "Модельная стрижка", price: 1800, order: 4 },
             { name: "Оформление бороды", price: 1000, order: 5 }
         ];
+
+        // Изначальный список районов
+        const DEFAULT_DISTRICTS = [
+            { name: "Калининский", order: 1 },
+            { name: "Парковый", order: 2 },
+            { name: "Центральный", order: 3 }
+        ];
+
+        // Изначальный профиль барбера
+        const DEFAULT_BARBER = {
+            name: "Анна",
+            role: "Мастер мужских стрижек"
+        };
 
         // Firebase Configuration
         const firebaseConfig = {
@@ -1903,10 +2016,12 @@
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('splash').classList.add('hidden');
-            }, 1500);
+            }, 2500); // Немного увеличил время для красивой анимации ножниц
 
             loadPortfolio();
             loadPricing();
+            loadDistricts();
+            loadBarberInfo();
         });
 
         /* ============================================
@@ -2003,7 +2118,7 @@
         }
 
         /* ============================================
-           GOOGLE CALENDAR BUTTONS HANDLER
+           CALL / GOOGLE CALENDAR BUTTONS HANDLER
            ============================================ */
         document.querySelectorAll('.book-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -2018,10 +2133,101 @@
             });
         });
 
-        // Update phone links
+        // Update phone links + iOS Fix via JS Native redirect instead of direct link execution
         document.querySelectorAll('[href^="tel:"]').forEach(link => {
             link.href = `tel:${PHONE_NUMBER}`;
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                haptic('light');
+                // Telegram WebApp iOS Safari fix - trigger redirection manually
+                if (tg && tg.openLink) {
+                    try {
+                        tg.openLink(`tel:${PHONE_NUMBER}`);
+                    } catch (err) {
+                        window.location.href = `tel:${PHONE_NUMBER}`;
+                    }
+                } else {
+                    window.location.href = `tel:${PHONE_NUMBER}`;
+                }
+            });
         });
+
+        /* ============================================
+           BARBER PROFILE MANAGEMENT (FIREBASE)
+           ============================================ */
+        async function loadBarberInfo() {
+            if (!firebaseReady) {
+                renderBarberInfo(DEFAULT_BARBER);
+                return;
+            }
+            try {
+                const doc = await db.collection('settings').doc('barberProfile').get();
+                if (!doc.exists) {
+                    await db.collection('settings').doc('barberProfile').set(DEFAULT_BARBER);
+                    renderBarberInfo(DEFAULT_BARBER);
+                } else {
+                    renderBarberInfo(doc.data());
+                }
+            } catch(e) {
+                console.error("Error loading barber info", e);
+                renderBarberInfo(DEFAULT_BARBER);
+            }
+        }
+
+        function renderBarberInfo(data) {
+            const titleEl = document.getElementById('barberNameTitle');
+            const displayEl = document.getElementById('barberNameDisplay');
+            if (titleEl) titleEl.textContent = data.name || 'Анна';
+            if (displayEl) displayEl.textContent = data.role || 'Мастер мужских стрижек';
+        }
+
+        function openBarberModal() {
+            const currentName = document.getElementById('barberNameTitle').textContent;
+            const currentRole = document.getElementById('barberNameDisplay').textContent;
+            document.getElementById('barberNameInput').value = currentName;
+            document.getElementById('barberRoleInput').value = currentRole;
+            document.getElementById('barberModal').classList.add('show');
+            haptic('medium');
+        }
+
+        function closeBarberModal() {
+            document.getElementById('barberModal').classList.remove('show');
+        }
+
+        document.getElementById('barberModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeBarberModal();
+        });
+
+        async function saveBarberInfo() {
+            const name = document.getElementById('barberNameInput').value.trim();
+            const role = document.getElementById('barberRoleInput').value.trim();
+
+            if (!name) {
+                if (tg) tg.showAlert('Пожалуйста, введите имя барбера');
+                else alert('Пожалуйста, введите имя барбера');
+                return;
+            }
+
+            if (!firebaseReady) return;
+
+            const btn = document.getElementById('barberSubmitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ph-bold ph-spinner"></i> Сохранение...';
+
+            try {
+                await db.collection('settings').doc('barberProfile').set({ name, role }, { merge: true });
+                haptic('success');
+                closeBarberModal();
+                loadBarberInfo();
+            } catch(e) {
+                console.error(e);
+                haptic('error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ph-bold ph-check"></i> Сохранить';
+            }
+        }
+
 
         /* ============================================
            PRICING MANAGEMENT (FIREBASE)
@@ -2037,7 +2243,6 @@
             try {
                 const snapshot = await db.collection('services').orderBy('order', 'asc').get();
                 
-                // Если база пустая — заполняем её стандартными данными
                 if (snapshot.empty) {
                     for (const s of DEFAULT_SERVICES) {
                         await db.collection('services').add({
@@ -2047,7 +2252,6 @@
                             createdAt: firebase.firestore.FieldValue.serverTimestamp()
                         });
                     }
-                    // Перезагружаем после добавления
                     return loadPricing();
                 }
 
@@ -2066,7 +2270,7 @@
         function renderPricing(services) {
             const container = document.getElementById('pricingList');
             container.innerHTML = services.map((item) => `
-                <div class="price-card animate-in visible" data-id="${item.id}">
+                <div class="price-card animate-in visible" data-id="${item.id || ''}">
                     <div class="price-content">
                         <span class="price-name">${item.name}</span>
                         <span class="price-value" data-price="${item.price}">${item.price} ₽</span>
@@ -2080,11 +2284,9 @@
                 </div>
             `).join('');
 
-            // Инициализация анимации счетчика для отрендеренных элементов
             document.querySelectorAll('[data-price]').forEach(el => priceObserver.observe(el));
         }
 
-        /* --- Admin Service Modal --- */
         function openEditServiceModal(id = '', name = '', price = '') {
             document.getElementById('serviceId').value = id;
             document.getElementById('serviceName').value = name;
@@ -2125,10 +2327,8 @@
 
             try {
                 if (id) {
-                    // Обновление существующей
                     await db.collection('services').doc(id).update({ name, price });
                 } else {
-                    // Добавление новой (добавляем в конец)
                     const snapshot = await db.collection('services').orderBy('order', 'desc').limit(1).get();
                     let newOrder = 1;
                     if (!snapshot.empty) {
@@ -2144,7 +2344,7 @@
                 
                 haptic('success');
                 closeServiceModal();
-                loadPricing(); // перезагрузка списка
+                loadPricing();
             } catch (e) {
                 console.error("Error saving service", e);
                 haptic('error');
@@ -2174,6 +2374,143 @@
             }
         }
 
+        /* ============================================
+           DISTRICTS MANAGEMENT (FIREBASE)
+           ============================================ */
+        async function loadDistricts() {
+            const gridContainer = document.getElementById('districtsGrid');
+            
+            if (!firebaseReady) {
+                renderDistricts(DEFAULT_DISTRICTS);
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('districts').orderBy('order', 'asc').get();
+                
+                if (snapshot.empty) {
+                    for (const d of DEFAULT_DISTRICTS) {
+                        await db.collection('districts').add({
+                            name: d.name,
+                            order: d.order,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                    return loadDistricts();
+                }
+
+                const districts = [];
+                snapshot.forEach(doc => {
+                    districts.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderDistricts(districts);
+            } catch (e) {
+                console.error('Error loading districts:', e);
+                renderDistricts(DEFAULT_DISTRICTS);
+            }
+        }
+
+        function renderDistricts(districts) {
+            const container = document.getElementById('districtsGrid');
+            container.innerHTML = districts.map((item) => `
+                <div class="district-card animate-in visible" data-id="${item.id || ''}">
+                    <div class="district-card-content">
+                        <div class="district-pin"><i class="ph-fill ph-map-pin"></i></div>
+                        <div class="district-name">${item.name}</div>
+                    </div>
+                    ${isAdmin ? `
+                    <div class="admin-actions-inline">
+                        <button class="admin-icon-btn" onclick="openDistrictModal('${item.id || ''}', '${item.name.replace(/'/g, "\\'")}')"><i class="ph ph-pencil-simple"></i></button>
+                        <button class="admin-icon-btn delete" onclick="deleteDistrict('${item.id || ''}')"><i class="ph ph-trash"></i></button>
+                    </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+
+        function openDistrictModal(id = '', name = '') {
+            document.getElementById('districtId').value = id;
+            document.getElementById('districtNameInput').value = name;
+            
+            document.getElementById('districtModalTitle').innerHTML = id ? 'Редактировать <span>район</span>' : 'Добавить <span>район</span>';
+            document.getElementById('districtModal').classList.add('show');
+            haptic('medium');
+        }
+
+        function closeDistrictModal() {
+            document.getElementById('districtModal').classList.remove('show');
+            document.getElementById('districtId').value = '';
+            document.getElementById('districtNameInput').value = '';
+        }
+
+        document.getElementById('districtModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeDistrictModal();
+        });
+
+        async function saveDistrict() {
+            const id = document.getElementById('districtId').value;
+            const name = document.getElementById('districtNameInput').value.trim();
+
+            if (!name) {
+                if (tg) tg.showAlert('Введите название района');
+                else alert('Введите название района');
+                return;
+            }
+
+            if (!firebaseReady) return;
+
+            const btn = document.getElementById('districtSubmitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ph-bold ph-spinner"></i> Сохранение...';
+
+            try {
+                if (id) {
+                    await db.collection('districts').doc(id).update({ name });
+                } else {
+                    const snapshot = await db.collection('districts').orderBy('order', 'desc').limit(1).get();
+                    let newOrder = 1;
+                    if (!snapshot.empty) {
+                        newOrder = snapshot.docs[0].data().order + 1;
+                    }
+                    await db.collection('districts').add({
+                        name,
+                        order: newOrder,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                haptic('success');
+                closeDistrictModal();
+                loadDistricts();
+            } catch (e) {
+                console.error("Error saving district", e);
+                haptic('error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ph-bold ph-check"></i> Сохранить';
+            }
+        }
+
+        async function deleteDistrict(id) {
+            if (!id || !isAdmin) return;
+            
+            const confirmed = await new Promise((resolve) => {
+                if (tg) tg.showConfirm('Точно удалить район?', resolve);
+                else resolve(confirm('Точно удалить район?'));
+            });
+
+            if (!confirmed) return;
+
+            try {
+                await db.collection('districts').doc(id).delete();
+                haptic('success');
+                loadDistricts();
+            } catch (e) {
+                console.error("Error deleting district", e);
+                haptic('error');
+            }
+        }
 
         /* ============================================
            PRICE COUNTER ANIMATION
