@@ -7,6 +7,9 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- Phosphor Icons (современные векторные иконки) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -349,6 +352,10 @@
             overflow: hidden;
         }
 
+        .btn i {
+            font-size: 18px;
+        }
+
         .btn:active {
             transform: scale(0.96);
         }
@@ -458,6 +465,7 @@
 
         .timeline-icon {
             font-size: 24px;
+            color: var(--orange);
             margin-bottom: 8px;
         }
 
@@ -520,6 +528,7 @@
             width: 48px;
             height: 48px;
             background: var(--orange-faint);
+            color: var(--orange);
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -581,6 +590,7 @@
             height: 44px;
             min-width: 44px;
             background: var(--orange-faint);
+            color: var(--orange);
             border-radius: 12px;
             display: flex;
             align-items: center;
@@ -614,6 +624,7 @@
             box-shadow: 0 0 30px var(--orange-glow);
             margin: 0 auto 16px;
             background: var(--bg-secondary);
+            color: var(--orange);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -738,6 +749,7 @@
             font-size: 48px;
             margin-bottom: 12px;
             opacity: 0.5;
+            color: var(--text-muted);
         }
 
         /* Admin delete button */
@@ -751,7 +763,7 @@
             background: rgba(255, 0, 0, 0.8);
             border: none;
             color: white;
-            font-size: 14px;
+            font-size: 16px;
             cursor: pointer;
             z-index: 5;
             display: flex;
@@ -780,6 +792,10 @@
             box-shadow: 0 4px 20px var(--orange-glow);
             transition: var(--transition);
         }
+        
+        .admin-add-btn i {
+            font-size: 18px;
+        }
 
         .admin-add-btn:active {
             transform: scale(0.97);
@@ -791,6 +807,12 @@
             background-size: 200% 100%;
             animation: skeletonShimmer 1.5s infinite;
             border-radius: var(--radius);
+        }
+        
+        .skeleton-row {
+            height: 58px;
+            width: 100%;
+            margin-bottom: 10px;
         }
 
         @keyframes skeletonShimmer {
@@ -809,14 +831,20 @@
 
         .price-card {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
+            flex-direction: column;
             background: var(--bg-card);
             border: 1px solid var(--orange-faint);
             border-radius: var(--radius);
             padding: 18px 20px;
             transition: var(--transition);
             backdrop-filter: blur(10px);
+        }
+
+        .price-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
         }
 
         .price-card:active {
@@ -836,6 +864,33 @@
             text-shadow: 0 0 15px var(--orange-glow);
             white-space: nowrap;
         }
+
+        /* Admin Actions for Prices */
+        .price-admin-actions {
+            display: none;
+            gap: 8px;
+            margin-top: 14px;
+            width: 100%;
+            justify-content: flex-end;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            padding-top: 14px;
+        }
+
+        body.is-admin .price-admin-actions {
+            display: flex;
+        }
+
+        .admin-icon-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--orange-faint);
+            color: var(--text-primary);
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .admin-icon-btn.delete { color: #ff4444; border-color: rgba(255, 68, 68, 0.3); }
 
         .price-note {
             margin-top: 16px;
@@ -890,11 +945,12 @@
             height: 40px;
             min-width: 40px;
             background: var(--orange-faint);
+            color: var(--orange);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
         }
 
         .district-name {
@@ -945,14 +1001,13 @@
             justify-content: center;
             color: var(--orange);
             font-size: 16px;
-            font-weight: 700;
             transition: var(--transition);
         }
 
         .faq-item.open .faq-toggle {
             background: var(--orange);
             color: #000;
-            transform: rotate(45deg);
+            transform: rotate(180deg);
         }
 
         .faq-answer {
@@ -1072,7 +1127,8 @@
         }
 
         .nav-icon {
-            font-size: 20px;
+            font-size: 22px;
+            color: var(--text-muted);
             transition: var(--transition);
         }
 
@@ -1084,6 +1140,7 @@
         }
 
         .nav-item.active .nav-icon {
+            color: var(--orange);
             filter: drop-shadow(0 0 8px var(--orange-glow));
         }
 
@@ -1185,6 +1242,7 @@
 
         .upload-area .upload-icon {
             font-size: 40px;
+            color: var(--orange);
             margin-bottom: 8px;
         }
 
@@ -1253,7 +1311,8 @@
         }
 
         .form-group select,
-        .form-group input[type="text"] {
+        .form-group input[type="text"],
+        .form-group input[type="number"] {
             width: 100%;
             padding: 12px 16px;
             background: var(--bg-card);
@@ -1276,7 +1335,8 @@
         }
 
         .form-group select:focus,
-        .form-group input[type="text"]:focus {
+        .form-group input[type="text"]:focus,
+        .form-group input[type="number"]:focus {
             border-color: var(--orange);
             box-shadow: 0 0 15px var(--orange-glow);
         }
@@ -1363,7 +1423,7 @@
 
         <!-- HERO -->
         <section class="hero" id="home">
-            <div class="hero-badge">🔥 Выездной барбершоп</div>
+            <div class="hero-badge"><i class="ph-fill ph-fire"></i> Выездной барбершоп</div>
             <h1 class="hero-title">Wheel<span class="highlight">Barber</span></h1>
             <p class="hero-tagline">Барбер приезжает к тебе домой</p>
             <p class="hero-text">
@@ -1371,8 +1431,13 @@
                 Теперь профессиональная мужская стрижка может быть прямо у тебя дома.
             </p>
             <div class="hero-buttons">
-                <a href="#cta" class="btn btn-primary">✂️ Записаться на стрижку</a>
-                <a href="tel:+79000000000" class="btn btn-outline" id="heroCallBtn">📞 Позвонить</a>
+                <!-- ССЫЛКА НА GOOGLE CALENDAR И ИКОНКА SCISSORS -->
+                <a href="https://calendar.app.google/d3LC7DGE1F7FjoW88" class="btn btn-primary book-btn">
+                    <i class="ph-fill ph-scissors"></i> Записаться на стрижку
+                </a>
+                <a href="tel:+79000000000" class="btn btn-outline" id="heroCallBtn">
+                    <i class="ph-fill ph-phone"></i> Позвонить
+                </a>
             </div>
         </section>
 
@@ -1389,7 +1454,7 @@
                 <div class="timeline-item animate-in">
                     <div class="timeline-dot">1</div>
                     <div class="timeline-card">
-                        <div class="timeline-icon">🕐</div>
+                        <div class="timeline-icon"><i class="ph-fill ph-clock"></i></div>
                         <div class="timeline-title">Ты выбираешь удобное время</div>
                         <div class="timeline-desc">Запишись онлайн или позвони нам</div>
                     </div>
@@ -1397,7 +1462,7 @@
                 <div class="timeline-item animate-in">
                     <div class="timeline-dot">2</div>
                     <div class="timeline-card">
-                        <div class="timeline-icon">🚗</div>
+                        <div class="timeline-icon"><i class="ph-fill ph-car-profile"></i></div>
                         <div class="timeline-title">Барбер приезжает к тебе домой</div>
                         <div class="timeline-desc">Точно в назначенное время</div>
                     </div>
@@ -1405,7 +1470,7 @@
                 <div class="timeline-item animate-in">
                     <div class="timeline-dot">3</div>
                     <div class="timeline-card">
-                        <div class="timeline-icon">💼</div>
+                        <div class="timeline-icon"><i class="ph-fill ph-briefcase"></i></div>
                         <div class="timeline-title">Привозит всё оборудование</div>
                         <div class="timeline-desc">Полноценное барбер-место у тебя дома</div>
                     </div>
@@ -1413,7 +1478,7 @@
                 <div class="timeline-item animate-in">
                     <div class="timeline-dot">4</div>
                     <div class="timeline-card">
-                        <div class="timeline-icon">✂️</div>
+                        <div class="timeline-icon"><i class="ph-fill ph-scissors"></i></div>
                         <div class="timeline-title">Делает аккуратную стрижку</div>
                         <div class="timeline-desc">Профессионально и с вниманием к деталям</div>
                     </div>
@@ -1436,19 +1501,19 @@
 
             <div class="equipment-grid">
                 <div class="equipment-card animate-in">
-                    <div class="equipment-icon">💺</div>
+                    <div class="equipment-icon"><i class="ph-fill ph-armchair"></i></div>
                     <div class="equipment-name">Профессиональный барберский стул</div>
                 </div>
                 <div class="equipment-card animate-in">
-                    <div class="equipment-icon">💡</div>
+                    <div class="equipment-icon"><i class="ph-fill ph-lightbulb"></i></div>
                     <div class="equipment-name">Студийный свет</div>
                 </div>
                 <div class="equipment-card animate-in">
-                    <div class="equipment-icon">✂️</div>
+                    <div class="equipment-icon"><i class="ph-fill ph-scissors"></i></div>
                     <div class="equipment-name">Машинки и инструменты</div>
                 </div>
                 <div class="equipment-card animate-in">
-                    <div class="equipment-icon">🧹</div>
+                    <div class="equipment-icon"><i class="ph-fill ph-broom"></i></div>
                     <div class="equipment-name">Пылесос для уборки волос</div>
                 </div>
             </div>
@@ -1476,15 +1541,15 @@
 
             <div class="features-list">
                 <div class="feature-card animate-in">
-                    <div class="feature-icon-wrap">⏰</div>
+                    <div class="feature-icon-wrap"><i class="ph-fill ph-alarm"></i></div>
                     <div class="feature-text">Нет времени ездить по городу</div>
                 </div>
                 <div class="feature-card animate-in">
-                    <div class="feature-icon-wrap">🚫</div>
+                    <div class="feature-icon-wrap"><i class="ph-fill ph-prohibit"></i></div>
                     <div class="feature-text">Не хочется ждать в очередях</div>
                 </div>
                 <div class="feature-card animate-in">
-                    <div class="feature-icon-wrap">🏠</div>
+                    <div class="feature-icon-wrap"><i class="ph-fill ph-house"></i></div>
                     <div class="feature-text">Хочется стричься в комфортной обстановке</div>
                 </div>
             </div>
@@ -1499,8 +1564,8 @@
             </div>
 
             <div class="barber-card animate-in">
-                <div class="barber-avatar">💈</div>
-                <div class="barber-badge">⭐ Опыт работы: 3 года</div>
+                <div class="barber-avatar"><i class="ph-fill ph-scissors"></i></div>
+                <div class="barber-badge"><i class="ph-fill ph-star"></i> Опыт работы: 3 года</div>
                 <h3 class="barber-name">Мастер мужских стрижек</h3>
                 <p class="barber-desc">
                     Наш барбер работает с классическими и современными стилями.
@@ -1520,7 +1585,7 @@
 
             <!-- Admin Add Button -->
             <button class="admin-add-btn admin-only animate-in" id="addPortfolioBtn">
-                ➕ Добавить пример(ы)
+                <i class="ph-bold ph-plus"></i> Добавить пример(ы)
             </button>
 
             <!-- Filters -->
@@ -1549,32 +1614,22 @@
                 <h2 class="section-title"><span>Цены</span></h2>
                 <p class="section-subtitle">Стоимость включает выезд барбера</p>
             </div>
+            
+            <!-- Admin Add Service Button -->
+            <button class="admin-add-btn admin-only animate-in" id="addServiceBtn" style="margin-bottom: 20px;" onclick="openEditServiceModal()">
+                <i class="ph-bold ph-plus"></i> Добавить услугу
+            </button>
 
-            <div class="pricing-list">
-                <div class="price-card animate-in">
-                    <span class="price-name">Стрижка машинкой</span>
-                    <span class="price-value" data-price="1000">1000 ₽</span>
-                </div>
-                <div class="price-card animate-in">
-                    <span class="price-name">Классическая стрижка</span>
-                    <span class="price-value" data-price="1400">1400 ₽</span>
-                </div>
-                <div class="price-card animate-in">
-                    <span class="price-name">Молодёжная стрижка</span>
-                    <span class="price-value" data-price="1600">1600 ₽</span>
-                </div>
-                <div class="price-card animate-in">
-                    <span class="price-name">Модельная стрижка</span>
-                    <span class="price-value" data-price="1800">1800 ₽</span>
-                </div>
-                <div class="price-card animate-in">
-                    <span class="price-name">Оформление бороды</span>
-                    <span class="price-value" data-price="1000">1000 ₽</span>
-                </div>
+            <div class="pricing-list" id="pricingList">
+                <div class="skeleton skeleton-row"></div>
+                <div class="skeleton skeleton-row"></div>
+                <div class="skeleton skeleton-row"></div>
+                <div class="skeleton skeleton-row"></div>
+                <div class="skeleton skeleton-row"></div>
             </div>
 
             <div class="price-note animate-in mt-24">
-                <div class="badge">👦 Также стрижём детей</div>
+                <div class="badge"><i class="ph-fill ph-user"></i> Также стрижём детей</div>
                 <p class="small">Стоимость включает выезд барбера</p>
             </div>
         </section>
@@ -1590,15 +1645,15 @@
 
             <div class="districts-grid">
                 <div class="district-card animate-in">
-                    <div class="district-pin">📍</div>
+                    <div class="district-pin"><i class="ph-fill ph-map-pin"></i></div>
                     <div class="district-name">Калининский</div>
                 </div>
                 <div class="district-card animate-in">
-                    <div class="district-pin">📍</div>
+                    <div class="district-pin"><i class="ph-fill ph-map-pin"></i></div>
                     <div class="district-name">Парковый</div>
                 </div>
                 <div class="district-card animate-in">
-                    <div class="district-pin">📍</div>
+                    <div class="district-pin"><i class="ph-fill ph-map-pin"></i></div>
                     <div class="district-name">Центральный</div>
                 </div>
             </div>
@@ -1616,7 +1671,7 @@
                 <div class="faq-item animate-in">
                     <div class="faq-question" onclick="toggleFaq(this)">
                         <span>Сколько длится стрижка?</span>
-                        <div class="faq-toggle">+</div>
+                        <div class="faq-toggle"><i class="ph-bold ph-caret-down"></i></div>
                     </div>
                     <div class="faq-answer">
                         <div class="faq-answer-inner">Обычно 30–40 минут.</div>
@@ -1625,7 +1680,7 @@
                 <div class="faq-item animate-in">
                     <div class="faq-question" onclick="toggleFaq(this)">
                         <span>Нужно ли что-то подготовить?</span>
-                        <div class="faq-toggle">+</div>
+                        <div class="faq-toggle"><i class="ph-bold ph-caret-down"></i></div>
                     </div>
                     <div class="faq-answer">
                         <div class="faq-answer-inner">Нет, барбер привозит всё оборудование. Тебе не нужно ничего готовить.</div>
@@ -1634,7 +1689,7 @@
                 <div class="faq-item animate-in">
                     <div class="faq-question" onclick="toggleFaq(this)">
                         <span>Можно ли постричь ребёнка?</span>
-                        <div class="faq-toggle">+</div>
+                        <div class="faq-toggle"><i class="ph-bold ph-caret-down"></i></div>
                     </div>
                     <div class="faq-answer">
                         <div class="faq-answer-inner">Да, мы также стрижём детей.</div>
@@ -1652,8 +1707,12 @@
                 <p class="cta-text">Барбер приедет к тебе со всем оборудованием и сделает стрижку дома.</p>
             </div>
             <div class="cta-buttons animate-in">
-                <a href="#" class="btn btn-primary" id="ctaBookBtn">✂️ Записаться</a>
-                <a href="tel:+79000000000" class="btn btn-outline" id="ctaCallBtn">📞 Позвонить</a>
+                <a href="https://calendar.app.google/d3LC7DGE1F7FjoW88" class="btn btn-primary book-btn">
+                    <i class="ph-fill ph-scissors"></i> Записаться
+                </a>
+                <a href="tel:+79000000000" class="btn btn-outline" id="ctaCallBtn">
+                    <i class="ph-fill ph-phone"></i> Позвонить
+                </a>
             </div>
         </section>
 
@@ -1669,19 +1728,19 @@
          ========================================== -->
     <nav class="bottom-nav" id="bottomNav">
         <a class="nav-item active" data-target="home">
-            <span class="nav-icon">🏠</span>
+            <span class="nav-icon"><i class="ph-fill ph-house"></i></span>
             <span class="nav-label">Главная</span>
         </a>
         <a class="nav-item" data-target="pricing">
-            <span class="nav-icon">✂️</span>
+            <span class="nav-icon"><i class="ph-fill ph-scissors"></i></span>
             <span class="nav-label">Услуги</span>
         </a>
         <a class="nav-item" data-target="portfolio">
-            <span class="nav-icon">📸</span>
+            <span class="nav-icon"><i class="ph-fill ph-camera"></i></span>
             <span class="nav-label">Работы</span>
         </a>
         <a class="nav-item" data-target="cta">
-            <span class="nav-icon">📞</span>
+            <span class="nav-icon"><i class="ph-fill ph-phone"></i></span>
             <span class="nav-label">Контакты</span>
         </a>
     </nav>
@@ -1690,20 +1749,20 @@
          LIGHTBOX MODAL
          ========================================== -->
     <div class="modal-overlay" id="lightboxModal">
-        <button class="modal-close" onclick="closeLightbox()">✕</button>
+        <button class="modal-close" onclick="closeLightbox()"><i class="ph-bold ph-x"></i></button>
         <img class="lightbox-img" id="lightboxImg" src="" alt="">
     </div>
 
     <!-- ==========================================
-         UPLOAD MODAL
+         UPLOAD MODAL (PORTFOLIO)
          ========================================== -->
     <div class="modal-overlay" id="uploadModal">
         <div class="upload-modal">
-            <button class="modal-close" onclick="closeUploadModal()" style="position:relative; margin-left:auto; margin-bottom:8px;">✕</button>
+            <button class="modal-close" onclick="closeUploadModal()" style="position:relative; margin-left:auto; margin-bottom:8px;"><i class="ph-bold ph-x"></i></button>
             <h3>Добавить <span>примеры</span></h3>
 
             <div class="upload-area" id="uploadArea">
-                <div class="upload-icon">📷</div>
+                <div class="upload-icon"><i class="ph-fill ph-camera"></i></div>
                 <div class="upload-text">Нажми для выбора фото</div>
                 <div class="upload-hint">Можно выбрать несколько</div>
             </div>
@@ -1731,7 +1790,33 @@
             </div>
 
             <button class="btn btn-primary" style="width:100%;" id="uploadSubmitBtn" onclick="uploadPhotos()">
-                🚀 Загрузить
+                <i class="ph-bold ph-upload-simple"></i> Загрузить
+            </button>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         SERVICE ADMIN MODAL (PRICE)
+         ========================================== -->
+    <div class="modal-overlay" id="serviceModal">
+        <div class="upload-modal">
+            <button class="modal-close" onclick="closeServiceModal()" style="position:relative; margin-left:auto; margin-bottom:8px;"><i class="ph-bold ph-x"></i></button>
+            <h3 id="serviceModalTitle">Добавить <span>услугу</span></h3>
+            
+            <input type="hidden" id="serviceId">
+            
+            <div class="form-group">
+                <label>Название услуги</label>
+                <input type="text" id="serviceName" placeholder="Например: Стрижка машинкой">
+            </div>
+
+            <div class="form-group">
+                <label>Цена (₽)</label>
+                <input type="number" id="servicePrice" placeholder="1000">
+            </div>
+
+            <button class="btn btn-primary" style="width:100%;" onclick="saveService()" id="serviceSubmitBtn">
+                <i class="ph-bold ph-check"></i> Сохранить
             </button>
         </div>
     </div>
@@ -1745,9 +1830,18 @@
            CONFIGURATION
            ============================================ */
         const ADMIN_IDS = [1262669099, 5215828279];
-        const PHONE_NUMBER = '+79514469597'; // Замените на реальный номер
+        const PHONE_NUMBER = '+79514469597';
 
-        // Firebase Configuration - ЗАМЕНИТЕ НА СВОИ ДАННЫЕ
+        // Изначальный список услуг, если БД пустая
+        const DEFAULT_SERVICES = [
+            { name: "Стрижка машинкой", price: 1000, order: 1 },
+            { name: "Классическая стрижка", price: 1400, order: 2 },
+            { name: "Молодёжная стрижка", price: 1600, order: 3 },
+            { name: "Модельная стрижка", price: 1800, order: 4 },
+            { name: "Оформление бороды", price: 1000, order: 5 }
+        ];
+
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCJgaLvrRPNPxDIR254I-E5jOc_DYMETXc",
             authDomain: "wheelbarber-25b57.firebaseapp.com",
@@ -1783,40 +1877,36 @@
             tg.ready();
             tg.expand();
 
-            // Get user info
             const user = tg.initDataUnsafe?.user;
             if (user) {
                 currentUserId = user.id;
                 isAdmin = ADMIN_IDS.includes(user.id);
             }
 
-            // Apply admin class
             if (isAdmin) {
                 document.body.classList.add('is-admin');
             }
 
-            // Setup back button
             tg.BackButton.onClick(() => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 tg.BackButton.hide();
             });
         }
 
-        // Data storage
         let portfolioItems = [];
         let selectedFiles = [];
         let currentFilter = 'all';
 
         /* ============================================
-           SPLASH SCREEN
+           SPLASH SCREEN & DATA LOADING
            ============================================ */
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('splash').classList.add('hidden');
             }, 1500);
 
-            // Load portfolio
             loadPortfolio();
+            loadPricing();
         });
 
         /* ============================================
@@ -1828,24 +1918,21 @@
             const scrollPercent = (scrollTop / docHeight) * 100;
             document.getElementById('scrollProgress').style.width = scrollPercent + '%';
 
-            // Show/hide back button
             if (tg && scrollTop > 300) {
                 tg.BackButton.show();
             } else if (tg) {
                 tg.BackButton.hide();
             }
 
-            // Update active nav
             updateActiveNav();
         });
 
         /* ============================================
-           SCROLL ANIMATIONS (Intersection Observer)
+           SCROLL ANIMATIONS
            ============================================ */
         const observer = new IntersectionObserver((entries) => {
             entries.forEach((entry, index) => {
                 if (entry.isIntersecting) {
-                    // Stagger animation
                     setTimeout(() => {
                         entry.target.classList.add('visible');
                     }, index * 100);
@@ -1895,10 +1982,8 @@
             const item = el.closest('.faq-item');
             const wasOpen = item.classList.contains('open');
 
-            // Close all
             document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
 
-            // Toggle current
             if (!wasOpen) {
                 item.classList.add('open');
             }
@@ -1918,6 +2003,208 @@
         }
 
         /* ============================================
+           GOOGLE CALENDAR BUTTONS HANDLER
+           ============================================ */
+        document.querySelectorAll('.book-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                haptic('medium');
+                const url = btn.getAttribute('href');
+                if (tg && tg.openLink) {
+                    tg.openLink(url);
+                } else {
+                    window.open(url, '_blank');
+                }
+            });
+        });
+
+        // Update phone links
+        document.querySelectorAll('[href^="tel:"]').forEach(link => {
+            link.href = `tel:${PHONE_NUMBER}`;
+        });
+
+        /* ============================================
+           PRICING MANAGEMENT (FIREBASE)
+           ============================================ */
+        async function loadPricing() {
+            const listContainer = document.getElementById('pricingList');
+            
+            if (!firebaseReady) {
+                renderPricing(DEFAULT_SERVICES);
+                return;
+            }
+
+            try {
+                const snapshot = await db.collection('services').orderBy('order', 'asc').get();
+                
+                // Если база пустая — заполняем её стандартными данными
+                if (snapshot.empty) {
+                    for (const s of DEFAULT_SERVICES) {
+                        await db.collection('services').add({
+                            name: s.name,
+                            price: s.price,
+                            order: s.order,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
+                    // Перезагружаем после добавления
+                    return loadPricing();
+                }
+
+                const services = [];
+                snapshot.forEach(doc => {
+                    services.push({ id: doc.id, ...doc.data() });
+                });
+
+                renderPricing(services);
+            } catch (e) {
+                console.error('Error loading services:', e);
+                renderPricing(DEFAULT_SERVICES);
+            }
+        }
+
+        function renderPricing(services) {
+            const container = document.getElementById('pricingList');
+            container.innerHTML = services.map((item) => `
+                <div class="price-card animate-in visible" data-id="${item.id}">
+                    <div class="price-content">
+                        <span class="price-name">${item.name}</span>
+                        <span class="price-value" data-price="${item.price}">${item.price} ₽</span>
+                    </div>
+                    ${isAdmin ? `
+                    <div class="price-admin-actions">
+                        <button class="admin-icon-btn" onclick="openEditServiceModal('${item.id || ''}', '${item.name.replace(/'/g, "\\'")}', ${item.price})"><i class="ph ph-pencil-simple"></i></button>
+                        <button class="admin-icon-btn delete" onclick="deleteService('${item.id || ''}')"><i class="ph ph-trash"></i></button>
+                    </div>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            // Инициализация анимации счетчика для отрендеренных элементов
+            document.querySelectorAll('[data-price]').forEach(el => priceObserver.observe(el));
+        }
+
+        /* --- Admin Service Modal --- */
+        function openEditServiceModal(id = '', name = '', price = '') {
+            document.getElementById('serviceId').value = id;
+            document.getElementById('serviceName').value = name;
+            document.getElementById('servicePrice').value = price;
+            
+            document.getElementById('serviceModalTitle').innerHTML = id ? 'Редактировать <span>услугу</span>' : 'Добавить <span>услугу</span>';
+            document.getElementById('serviceModal').classList.add('show');
+            haptic('medium');
+        }
+
+        function closeServiceModal() {
+            document.getElementById('serviceModal').classList.remove('show');
+            document.getElementById('serviceId').value = '';
+            document.getElementById('serviceName').value = '';
+            document.getElementById('servicePrice').value = '';
+        }
+
+        document.getElementById('serviceModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeServiceModal();
+        });
+
+        async function saveService() {
+            const id = document.getElementById('serviceId').value;
+            const name = document.getElementById('serviceName').value.trim();
+            const price = parseInt(document.getElementById('servicePrice').value.trim());
+
+            if (!name || isNaN(price)) {
+                if (tg) tg.showAlert('Заполните все поля корректно');
+                else alert('Заполните все поля корректно');
+                return;
+            }
+
+            if (!firebaseReady) return;
+
+            const btn = document.getElementById('serviceSubmitBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="ph-bold ph-spinner"></i> Сохранение...';
+
+            try {
+                if (id) {
+                    // Обновление существующей
+                    await db.collection('services').doc(id).update({ name, price });
+                } else {
+                    // Добавление новой (добавляем в конец)
+                    const snapshot = await db.collection('services').orderBy('order', 'desc').limit(1).get();
+                    let newOrder = 1;
+                    if (!snapshot.empty) {
+                        newOrder = snapshot.docs[0].data().order + 1;
+                    }
+                    await db.collection('services').add({
+                        name,
+                        price,
+                        order: newOrder,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                haptic('success');
+                closeServiceModal();
+                loadPricing(); // перезагрузка списка
+            } catch (e) {
+                console.error("Error saving service", e);
+                haptic('error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="ph-bold ph-check"></i> Сохранить';
+            }
+        }
+
+        async function deleteService(id) {
+            if (!id || !isAdmin) return;
+            
+            const confirmed = await new Promise((resolve) => {
+                if (tg) tg.showConfirm('Точно удалить услугу?', resolve);
+                else resolve(confirm('Точно удалить услугу?'));
+            });
+
+            if (!confirmed) return;
+
+            try {
+                await db.collection('services').doc(id).delete();
+                haptic('success');
+                loadPricing();
+            } catch (e) {
+                console.error("Error deleting service", e);
+                haptic('error');
+            }
+        }
+
+
+        /* ============================================
+           PRICE COUNTER ANIMATION
+           ============================================ */
+        const priceObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseInt(el.dataset.price);
+                    animateCounter(el, 0, target, 800);
+                    priceObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        function animateCounter(el, start, end, duration) {
+            const startTime = performance.now();
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                const value = Math.round(start + (end - start) * eased);
+                el.textContent = value + ' ₽';
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            requestAnimationFrame(update);
+        }
+
+        /* ============================================
            PORTFOLIO - LOAD FROM FIREBASE
            ============================================ */
         async function loadPortfolio() {
@@ -1926,7 +2213,7 @@
             if (!firebaseReady) {
                 grid.innerHTML = `
                     <div class="portfolio-empty">
-                        <div class="empty-icon">📸</div>
+                        <div class="empty-icon"><i class="ph-fill ph-camera-slash"></i></div>
                         <p>Скоро здесь появятся примеры работ</p>
                     </div>
                 `;
@@ -1948,7 +2235,7 @@
                 console.error('Error loading portfolio:', e);
                 grid.innerHTML = `
                     <div class="portfolio-empty">
-                        <div class="empty-icon">📸</div>
+                        <div class="empty-icon"><i class="ph-fill ph-camera-slash"></i></div>
                         <p>Скоро здесь появятся примеры работ</p>
                     </div>
                 `;
@@ -1966,7 +2253,7 @@
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="portfolio-empty">
-                        <div class="empty-icon">📸</div>
+                        <div class="empty-icon"><i class="ph-fill ph-camera-slash"></i></div>
                         <p>Скоро здесь появятся примеры работ</p>
                     </div>
                 `;
@@ -1974,10 +2261,10 @@
             }
 
             grid.innerHTML = filtered.map(item => `
-                <div class="portfolio-item" onclick="openLightbox('${item.imageUrl}')" data-category="${item.category}">
+                <div class="portfolio-item animate-in visible" onclick="openLightbox('${item.imageUrl}')" data-category="${item.category}">
                     <img src="${item.imageUrl}" alt="${item.caption || 'Пример работы'}" loading="lazy">
                     ${item.caption ? `<div class="caption">${item.caption}</div>` : ''}
-                    ${isAdmin ? `<button class="portfolio-delete" onclick="event.stopPropagation(); deletePortfolioItem('${item.id}', '${item.storagePath}')">🗑</button>` : ''}
+                    ${isAdmin ? `<button class="portfolio-delete" onclick="event.stopPropagation(); deletePortfolioItem('${item.id}', '${item.storagePath}')"><i class="ph-bold ph-trash"></i></button>` : ''}
                 </div>
             `).join('');
         }
@@ -2014,7 +2301,7 @@
         });
 
         /* ============================================
-           UPLOAD MODAL
+           UPLOAD MODAL (PORTFOLIO)
            ============================================ */
         document.getElementById('addPortfolioBtn')?.addEventListener('click', () => {
             document.getElementById('uploadModal').classList.add('show');
@@ -2037,12 +2324,10 @@
             if (e.target === e.currentTarget) closeUploadModal();
         });
 
-        // Upload area click
         document.getElementById('uploadArea').addEventListener('click', () => {
             document.getElementById('fileInput').click();
         });
 
-        // File input change
         document.getElementById('fileInput').addEventListener('change', (e) => {
             const files = Array.from(e.target.files);
             files.forEach(file => {
@@ -2065,7 +2350,7 @@
                 return `
                     <div class="upload-preview">
                         <img src="${url}" alt="Preview">
-                        <button class="remove-preview" onclick="removeFile(${index})">✕</button>
+                        <button class="remove-preview" onclick="removeFile(${index})"><i class="ph-bold ph-x"></i></button>
                     </div>
                 `;
             }).join('');
@@ -2082,20 +2367,14 @@
            ============================================ */
         async function uploadPhotos() {
             if (selectedFiles.length === 0) {
-                if (tg) {
-                    tg.showAlert('Выберите хотя бы одно фото');
-                } else {
-                    alert('Выберите хотя бы одно фото');
-                }
+                if (tg) tg.showAlert('Выберите хотя бы одно фото');
+                else alert('Выберите хотя бы одно фото');
                 return;
             }
 
             if (!firebaseReady) {
-                if (tg) {
-                    tg.showAlert('Firebase не настроен. Проверьте конфигурацию.');
-                } else {
-                    alert('Firebase не настроен');
-                }
+                if (tg) tg.showAlert('Firebase не настроен');
+                else alert('Firebase не настроен');
                 return;
             }
 
@@ -2106,7 +2385,7 @@
             const submitBtn = document.getElementById('uploadSubmitBtn');
 
             submitBtn.disabled = true;
-            submitBtn.textContent = '⏳ Загрузка...';
+            submitBtn.innerHTML = '<i class="ph-bold ph-spinner"></i> Загрузка...';
             progressEl.classList.add('show');
 
             const totalFiles = selectedFiles.length;
@@ -2114,10 +2393,8 @@
 
             try {
                 for (const file of selectedFiles) {
-                    // Compress image
                     const compressedFile = await compressImage(file, 1200, 0.8);
 
-                    // Upload to Storage
                     const timestamp = Date.now();
                     const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
                     const storagePath = `portfolio/${timestamp}_${safeName}`;
@@ -2139,7 +2416,6 @@
 
                     const imageUrl = await storageRef.getDownloadURL();
 
-                    // Save to Firestore
                     await db.collection('portfolio').add({
                         imageUrl: imageUrl,
                         storagePath: storagePath,
@@ -2155,11 +2431,8 @@
 
                 haptic('success');
 
-                if (tg) {
-                    tg.showAlert(`✅ Загружено ${uploaded} фото!`);
-                } else {
-                    alert(`Загружено ${uploaded} фото!`);
-                }
+                if (tg) tg.showAlert(`✅ Загружено ${uploaded} фото!`);
+                else alert(`Загружено ${uploaded} фото!`);
 
                 closeUploadModal();
                 loadPortfolio();
@@ -2167,14 +2440,11 @@
             } catch (e) {
                 console.error('Upload error:', e);
                 haptic('error');
-                if (tg) {
-                    tg.showAlert('Ошибка загрузки: ' + e.message);
-                } else {
-                    alert('Ошибка загрузки: ' + e.message);
-                }
+                if (tg) tg.showAlert('Ошибка загрузки: ' + e.message);
+                else alert('Ошибка загрузки: ' + e.message);
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = '🚀 Загрузить';
+                submitBtn.innerHTML = '<i class="ph-bold ph-upload-simple"></i> Загрузить';
             }
         }
 
@@ -2222,20 +2492,15 @@
             if (!isAdmin) return;
 
             const confirmed = await new Promise((resolve) => {
-                if (tg) {
-                    tg.showConfirm('Удалить это фото?', resolve);
-                } else {
-                    resolve(confirm('Удалить это фото?'));
-                }
+                if (tg) tg.showConfirm('Удалить это фото?', resolve);
+                else resolve(confirm('Удалить это фото?'));
             });
 
             if (!confirmed) return;
 
             try {
-                // Delete from Firestore
                 await db.collection('portfolio').doc(docId).delete();
 
-                // Delete from Storage
                 if (storagePath) {
                     try {
                         await storage.ref(storagePath).delete();
@@ -2248,60 +2513,8 @@
                 loadPortfolio();
             } catch (e) {
                 console.error('Delete error:', e);
-                if (tg) {
-                    tg.showAlert('Ошибка удаления: ' + e.message);
-                }
+                if (tg) tg.showAlert('Ошибка удаления: ' + e.message);
             }
-        }
-
-        /* ============================================
-           BOOKING BUTTON HANDLERS
-           ============================================ */
-        document.getElementById('ctaBookBtn')?.addEventListener('click', (e) => {
-            e.preventDefault();
-            haptic('medium');
-
-            if (tg) {
-                // Send data back to bot
-                tg.sendData(JSON.stringify({ action: 'book' }));
-            }
-        });
-
-        // Update phone links
-        document.querySelectorAll('[href^="tel:"]').forEach(link => {
-            link.href = `tel:${PHONE_NUMBER}`;
-        });
-
-        /* ============================================
-           PRICE COUNTER ANIMATION
-           ============================================ */
-        const priceObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    const el = entry.target;
-                    const target = parseInt(el.dataset.price);
-                    animateCounter(el, 0, target, 800);
-                    priceObserver.unobserve(el);
-                }
-            });
-        }, { threshold: 0.5 });
-
-        document.querySelectorAll('[data-price]').forEach(el => priceObserver.observe(el));
-
-        function animateCounter(el, start, end, duration) {
-            const startTime = performance.now();
-            function update(currentTime) {
-                const elapsed = currentTime - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                // Ease out
-                const eased = 1 - Math.pow(1 - progress, 3);
-                const value = Math.round(start + (end - start) * eased);
-                el.textContent = value + ' ₽';
-                if (progress < 1) {
-                    requestAnimationFrame(update);
-                }
-            }
-            requestAnimationFrame(update);
         }
 
         /* ============================================
