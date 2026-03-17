@@ -102,22 +102,19 @@
             flex-direction: column;
             align-items: center;
             position: relative; 
-            transform: scale(0.65); /* Уменьшаем масштаб на 35% для отступов от краев */
+            transform: scale(0.65);
             animation: splashFloat 3s ease-in-out infinite;
         }
 
-        /* Плавное парение (без фильтра, чтобы не портить маску) */
         @keyframes splashFloat {
             0%, 100% { transform: scale(0.65) translateY(0); }
             50% { transform: scale(0.68) translateY(-10px); }
         }
 
-        /* Добавляем неоновое свечение напрямую на SVG */
         .splash-logo-container svg {
             filter: drop-shadow(0 0 12px rgba(255, 107, 0, 0.4));
         }
 
-        /* Анимация: резкое смыкание (снэп) и раскрытие ножниц */
         @keyframes snipA {
             0%, 100% { transform: rotate(4deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
             50% { transform: rotate(-12deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
@@ -138,9 +135,8 @@
             animation: snipB 1.8s infinite;
         }
 
-        /* Маска, которая перекрывает нижнее колесо при анимации */
         .splash-text-wrapper {
-            background-color: var(--bg-primary); /* Сливается с фоном, закрывая SVG */
+            background-color: var(--bg-primary);
             position: relative;
             z-index: 10;
             width: 100%;
@@ -154,11 +150,10 @@
             font-size: 32px;
             letter-spacing: 8px;
             font-weight: 800;
-            margin-left: 8px; /* Выравнивание с учетом letter-spacing */
+            margin-left: 8px;
             text-shadow: 0 0 20px var(--orange-glow);
         }
 
-        /* Красивая неоновая полоса загрузки */
         .splash-line {
             width: 140px;
             height: 4px;
@@ -235,9 +230,6 @@
             z-index: 1;
         }
 
-        /* ============================================
-           SECTION STYLES
-           ============================================ */
         .section {
             padding: 60px 20px;
             position: relative;
@@ -268,7 +260,6 @@
             margin-bottom: 32px;
         }
 
-        /* Animate on scroll */
         .animate-in {
             opacity: 0;
             transform: translateY(30px);
@@ -281,7 +272,7 @@
         }
 
         /* ============================================
-           HERO SECTION
+           HERO SECTION & VPN WARNING
            ============================================ */
         .hero {
             min-height: 85vh;
@@ -367,6 +358,27 @@
             width: 100%;
             max-width: 300px;
             animation: fadeInUp 0.8s ease 0.8s both;
+        }
+
+        .vpn-warning {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 16px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 6px;
+            text-align: left;
+            line-height: 1.4;
+            max-width: 280px;
+            margin-inline: auto;
+            animation: fadeInUp 0.8s ease 0.9s both;
+        }
+
+        .vpn-warning i {
+            color: var(--orange);
+            font-size: 16px;
+            margin-top: -1px;
         }
 
         @keyframes fadeInUp {
@@ -888,7 +900,7 @@
         }
 
         /* ============================================
-           PRICING CARDS
+           PRICING CARDS & PROMOS
            ============================================ */
         .pricing-list {
             display: flex;
@@ -930,6 +942,69 @@
             color: var(--orange);
             text-shadow: 0 0 15px var(--orange-glow);
             white-space: nowrap;
+        }
+
+        .price-discounted {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .price-old {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-decoration: line-through;
+            font-weight: 500;
+        }
+
+        .price-badge {
+            font-size: 10px;
+            background: var(--orange-faint);
+            color: var(--orange);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        /* Promo Block Styles */
+        .promo-container {
+            background: var(--bg-card);
+            border: 1px solid var(--orange-faint);
+            border-radius: var(--radius);
+            padding: 16px;
+        }
+
+        .promo-input-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .promo-input-group input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--orange-faint);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            font-family: var(--font);
+            font-size: 14px;
+            outline: none;
+            text-transform: uppercase;
+        }
+
+        .promo-input-group input:focus {
+            border-color: var(--orange);
+        }
+
+        .promo-admin-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--orange-faint);
         }
 
         .admin-actions-inline {
@@ -1448,22 +1523,16 @@
             width: 0%;
         }
 
-        /* ============================================
-           UTILITY CLASSES
-           ============================================ */
-        .text-orange { color: var(--orange); }
-        .text-center { text-align: center; }
-        .mt-12 { margin-top: 12px; }
-        .mt-24 { margin-top: 24px; }
-        .mb-24 { margin-bottom: 24px; }
-
         /* Hide admin elements by default */
         .admin-only {
-            display: none;
+            display: none !important;
         }
 
         body.is-admin .admin-only {
-            display: flex;
+            display: flex !important;
+        }
+        body.is-admin button.admin-only {
+            display: flex !important;
         }
     </style>
 </head>
@@ -1542,6 +1611,11 @@
                 <button class="btn btn-outline call-btn">
                     <i class="ph-fill ph-phone"></i> Позвонить
                 </button>
+            </div>
+            
+            <div class="vpn-warning animate-in">
+                <i class="ph-fill ph-warning-circle"></i>
+                <span>Отключите VPN перед записью — с ним время может отображаться неверно</span>
             </div>
         </section>
 
@@ -1727,7 +1801,15 @@
                 <p class="section-subtitle">Стоимость включает выезд барбера</p>
             </div>
             
-            <!-- Admin Add Service Button -->
+            <!-- ADMIN PROMOCODES LIST -->
+            <div class="admin-only promo-admin-container animate-in" id="promoAdminList" style="flex-direction: column; gap: 8px; margin-bottom: 20px; display: none;">
+                <!-- Filled via JS -->
+            </div>
+
+            <!-- Admin Buttons -->
+            <button class="admin-add-btn admin-only animate-in" id="addPromoBtn" style="margin-bottom: 10px;" onclick="openPromoModal()">
+                <i class="ph-bold ph-ticket"></i> Создать промокод
+            </button>
             <button class="admin-add-btn admin-only animate-in" id="addServiceBtn" style="margin-bottom: 20px;" onclick="openEditServiceModal()">
                 <i class="ph-bold ph-plus"></i> Добавить услугу
             </button>
@@ -1738,6 +1820,15 @@
                 <div class="skeleton skeleton-row"></div>
                 <div class="skeleton skeleton-row"></div>
                 <div class="skeleton skeleton-row"></div>
+            </div>
+
+            <!-- PROMOCODE USER INPUT -->
+            <div class="promo-container animate-in mt-24">
+                <div class="promo-input-group">
+                    <input type="text" id="promoInput" placeholder="Введите промокод">
+                    <button class="btn btn-primary btn-small" id="applyPromoBtn" onclick="applyPromo()">Применить</button>
+                </div>
+                <div id="promoStatus" style="margin-top: 8px; font-size: 12px; font-weight: 600; text-align: center;"></div>
             </div>
 
             <div class="price-note animate-in mt-24">
@@ -1824,6 +1915,11 @@
                 <button class="btn btn-outline call-btn">
                     <i class="ph-fill ph-phone"></i> Позвонить
                 </button>
+            </div>
+
+            <div class="vpn-warning animate-in">
+                <i class="ph-fill ph-warning-circle"></i>
+                <span>Отключите VPN перед записью — с ним время может отображаться неверно</span>
             </div>
         </section>
 
@@ -1954,6 +2050,30 @@
     </div>
 
     <!-- ==========================================
+         PROMOCODE ADMIN MODAL
+         ========================================== -->
+    <div class="modal-overlay" id="promoModal">
+        <div class="upload-modal">
+            <button class="modal-close" onclick="closePromoModal()" style="position:relative; margin-left:auto; margin-bottom:8px;"><i class="ph-bold ph-x"></i></button>
+            <h3>Создать <span>промокод</span></h3>
+            
+            <div class="form-group">
+                <label>Промокод (Текст)</label>
+                <input type="text" id="promoCodeInput" placeholder="Например: WHEEL20" style="text-transform: uppercase;">
+            </div>
+
+            <div class="form-group">
+                <label>Скидка (%)</label>
+                <input type="number" id="promoDiscountInput" placeholder="Например: 15" min="1" max="100">
+            </div>
+
+            <button class="btn btn-primary" style="width:100%;" onclick="savePromo()">
+                <i class="ph-bold ph-check"></i> Сохранить
+            </button>
+        </div>
+    </div>
+
+    <!-- ==========================================
          BARBER EDIT MODAL (ADMIN ONLY)
          ========================================== -->
     <div class="modal-overlay" id="barberModal">
@@ -2002,6 +2122,7 @@
            ============================================ */
         const ADMIN_IDS = [1262669099, 5215828279];
         const PHONE_NUMBER = '+79514469597';
+        const BOT_TOKEN = '8032487058:AAF2uqig20vSspuKkwbmyklzgxArxjXrDIE'; // Токен бота для уведомлений
 
         // Изначальный список услуг
         const DEFAULT_SERVICES = [
@@ -2047,6 +2168,7 @@
         const tg = window.Telegram?.WebApp;
         let isAdmin = false;
         let currentUserId = null;
+        let currentUserName = "Пользователь";
 
         if (tg) {
             tg.ready();
@@ -2055,6 +2177,7 @@
             const user = tg.initDataUnsafe?.user;
             if (user) {
                 currentUserId = user.id;
+                currentUserName = user.username ? `@${user.username}` : (user.first_name || "Пользователь");
                 isAdmin = ADMIN_IDS.includes(user.id);
             }
 
@@ -2081,6 +2204,7 @@
             loadPricing();
             loadDistricts();
             loadBarberInfo();
+            loadPromocodes();
             
         } catch (e) {
             console.warn('Firebase init error:', e);
@@ -2093,6 +2217,10 @@
         let portfolioItems = [];
         let selectedFiles = [];
         let currentFilter = 'all';
+        
+        let currentServices = [];
+        let allPromocodes = [];
+        let activeDiscount = 0; // % скидки
 
         /* ============================================
            SPLASH SCREEN & DATA LOADING
@@ -2365,7 +2493,6 @@
                 } 
                 // Если загружено новое фото
                 else if (newBarberPhotoDataUrl) {
-                    // Используем напрямую строку Base64 вместо Storage
                     finalImageUrl = newBarberPhotoDataUrl;
                 }
 
@@ -2388,12 +2515,153 @@
         }
 
         /* ============================================
+           PROMOCODES MANAGEMENT (FIREBASE)
+           ============================================ */
+        async function loadPromocodes() {
+            if (!firebaseReady) return;
+            try {
+                const snapshot = await db.collection('promocodes').get();
+                allPromocodes = [];
+                snapshot.forEach(doc => {
+                    allPromocodes.push({ id: doc.id, ...doc.data() });
+                });
+                if (isAdmin) renderAdminPromocodes();
+            } catch (e) {
+                console.error('Error loading promocodes:', e);
+            }
+        }
+
+        function renderAdminPromocodes() {
+            const list = document.getElementById('promoAdminList');
+            if (!list) return;
+
+            if (allPromocodes.length === 0) {
+                list.style.display = 'none';
+                return;
+            }
+
+            list.style.display = 'flex';
+            list.innerHTML = `<h4 style="font-size: 14px; margin-bottom: 4px; color: var(--text-secondary);">Активные промокоды:</h4>` + 
+                allPromocodes.map(p => `
+                <div class="promo-admin-item">
+                    <div>
+                        <strong>${p.code}</strong> <span style="color: var(--orange);">(-${p.discount}%)</span>
+                    </div>
+                    <button class="admin-icon-btn delete" onclick="deletePromo('${p.id}')" style="width: 28px; height: 28px;"><i class="ph ph-trash"></i></button>
+                </div>
+            `).join('');
+        }
+
+        function openPromoModal() {
+            document.getElementById('promoCodeInput').value = '';
+            document.getElementById('promoDiscountInput').value = '';
+            document.getElementById('promoModal').classList.add('show');
+            haptic('medium');
+        }
+
+        function closePromoModal() {
+            document.getElementById('promoModal').classList.remove('show');
+        }
+
+        document.getElementById('promoModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closePromoModal();
+        });
+
+        async function savePromo() {
+            const code = document.getElementById('promoCodeInput').value.trim().toUpperCase();
+            const discount = parseInt(document.getElementById('promoDiscountInput').value.trim());
+
+            if (!code || isNaN(discount) || discount < 1 || discount > 100) {
+                if(tg) tg.showAlert('Введите корректный промокод и скидку от 1 до 100');
+                else alert('Введите корректный промокод и скидку от 1 до 100');
+                return;
+            }
+
+            if (!firebaseReady) return;
+
+            try {
+                await db.collection('promocodes').add({
+                    code: code,
+                    discount: discount,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                haptic('success');
+                closePromoModal();
+                loadPromocodes();
+            } catch (e) {
+                console.error("Error saving promo", e);
+                haptic('error');
+            }
+        }
+
+        async function deletePromo(id) {
+            const confirmed = await new Promise((resolve) => {
+                if (tg) tg.showConfirm('Удалить промокод?', resolve);
+                else resolve(confirm('Удалить промокод?'));
+            });
+            if (!confirmed) return;
+
+            try {
+                await db.collection('promocodes').doc(id).delete();
+                haptic('success');
+                loadPromocodes();
+            } catch (e) {
+                console.error("Error deleting promo", e);
+                haptic('error');
+            }
+        }
+
+        function applyPromo() {
+            const input = document.getElementById('promoInput');
+            const status = document.getElementById('promoStatus');
+            const code = input.value.trim().toUpperCase();
+            
+            if (!code) return;
+
+            const foundPromo = allPromocodes.find(p => p.code === code);
+            
+            if (foundPromo) {
+                activeDiscount = foundPromo.discount;
+                renderPricing(currentServices); // Перерисовываем цены
+                
+                status.textContent = `✅ Промокод применен! Скидка ${activeDiscount}%`;
+                status.style.color = '#4ade80';
+                input.disabled = true;
+                document.getElementById('applyPromoBtn').disabled = true;
+                
+                haptic('success');
+                sendPromoNotificationToAdmins(foundPromo.code, activeDiscount);
+            } else {
+                status.textContent = '❌ Промокод не найден';
+                status.style.color = '#ef4444';
+                haptic('error');
+            }
+        }
+
+        function sendPromoNotificationToAdmins(code, discount) {
+            const text = `🚨 <b>Пользователь применил промокод!</b>\n\n👤 <b>Кто:</b> ${currentUserName}\n🎟 <b>Промокод:</b> ${code}\n📉 <b>Скидка:</b> ${discount}%`;
+            
+            ADMIN_IDS.forEach(adminId => {
+                fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        chat_id: adminId,
+                        text: text,
+                        parse_mode: 'HTML'
+                    })
+                }).catch(err => console.error("Error sending notification", err));
+            });
+        }
+
+        /* ============================================
            PRICING MANAGEMENT (FIREBASE)
            ============================================ */
         async function loadPricing() {
             const listContainer = document.getElementById('pricingList');
             if (!firebaseReady) {
-                renderPricing(DEFAULT_SERVICES);
+                currentServices = DEFAULT_SERVICES;
+                renderPricing(currentServices);
                 return;
             }
             try {
@@ -2409,24 +2677,43 @@
                     }
                     return loadPricing();
                 }
-                const services = [];
+                currentServices = [];
                 snapshot.forEach(doc => {
-                    services.push({ id: doc.id, ...doc.data() });
+                    currentServices.push({ id: doc.id, ...doc.data() });
                 });
-                renderPricing(services);
+                renderPricing(currentServices);
             } catch (e) {
                 console.error('Error loading services:', e);
-                renderPricing(DEFAULT_SERVICES);
+                currentServices = DEFAULT_SERVICES;
+                renderPricing(currentServices);
             }
         }
 
         function renderPricing(services) {
             const container = document.getElementById('pricingList');
-            container.innerHTML = services.map((item) => `
+            container.innerHTML = services.map((item) => {
+                let priceHtml = '';
+                
+                if (activeDiscount > 0) {
+                    const discountedPrice = Math.round(item.price * (1 - activeDiscount / 100));
+                    priceHtml = `
+                        <div class="price-discounted">
+                            <span class="price-old">${item.price} ₽</span>
+                            <span class="price-value" data-price="${discountedPrice}">${discountedPrice} ₽</span>
+                        </div>
+                    `;
+                } else {
+                    priceHtml = `<span class="price-value" data-price="${item.price}">${item.price} ₽</span>`;
+                }
+
+                return `
                 <div class="price-card animate-in visible" data-id="${item.id || ''}">
                     <div class="price-content">
-                        <span class="price-name">${item.name}</span>
-                        <span class="price-value" data-price="${item.price}">${item.price} ₽</span>
+                        <span class="price-name">
+                            ${item.name} 
+                            ${activeDiscount > 0 ? `<span class="price-badge">-${activeDiscount}%</span>` : ''}
+                        </span>
+                        ${priceHtml}
                     </div>
                     ${isAdmin ? `
                     <div class="price-admin-actions">
@@ -2435,8 +2722,14 @@
                     </div>
                     ` : ''}
                 </div>
-            `).join('');
-            document.querySelectorAll('[data-price]').forEach(el => priceObserver.observe(el));
+                `;
+            }).join('');
+            
+            // Re-apply intersection observer to new price elements for animation
+            document.querySelectorAll('[data-price]').forEach(el => {
+                el.textContent = '0 ₽'; // reset before animation
+                priceObserver.observe(el);
+            });
         }
 
         function openEditServiceModal(id = '', name = '', price = '') {
