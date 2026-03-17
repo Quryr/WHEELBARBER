@@ -2038,30 +2038,22 @@
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
-            
-            // Ждем успешной авторизации перед запросами к БД (исправляет ошибку Missing Permissions)
-            firebase.auth().onAuthStateChanged((user) => {
-                if (user && !firebaseReady) {
-                    firebaseReady = true;
-                    loadPortfolio();
-                    loadPricing();
-                    loadDistricts();
-                    loadBarberInfo();
-                }
-            });
+            firebaseReady = true; // ✅ ТЕПЕРЬ ФАЕРБЕЙЗ СЧИТАЕТСЯ НАСТРОЕННЫМ СРАЗУ ПОСЛЕ INIT
 
             // Анонимная авторизация (важна для обхода дефолтных правил Firebase)
             firebase.auth().signInAnonymously().catch(e => {
                 console.warn('Auth error:', e);
-                // В случае ошибки показываем дефолтные данные
-                loadPortfolio();
-                loadPricing();
-                loadDistricts();
-                loadBarberInfo();
             });
+
+            // Не ждем авторизации и загружаем данные сразу синхронно
+            loadPortfolio();
+            loadPricing();
+            loadDistricts();
+            loadBarberInfo();
             
         } catch (e) {
             console.warn('Firebase init error:', e);
+            // Если совсем ошибка подключения, показываем хотя бы дефолтные данные
             loadPortfolio();
             loadPricing();
             loadDistricts();
@@ -2104,7 +2096,6 @@
             setTimeout(() => {
                 document.getElementById('splash').classList.add('hidden');
             }, 2500); 
-            // Загрузка данных перенесена в onAuthStateChanged для избежания ошибки прав доступа
         });
 
         /* ============================================
