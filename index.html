@@ -12,6 +12,7 @@
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
@@ -2011,6 +2012,10 @@
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
             storage = firebase.storage();
+            
+            // Анонимная авторизация для обхода правил Firebase (если они требуют auth != null)
+            firebase.auth().signInAnonymously().catch(e => console.warn('Auth error:', e));
+            
             firebaseReady = true;
         } catch (e) {
             console.warn('Firebase init error:', e);
@@ -2772,19 +2777,26 @@
                     const storagePath = `portfolio/${timestamp}_${safeName}`;
                     const storageRef = storage.ref(storagePath);
 
-                    const uploadTask = storageRef.put(compressedFile);
+                    const uploadTask = storageRef.put(compressedFile, { contentType: 'image/jpeg' });
 
-                    await new Promise((resolve, reject) => {
+                    const uploadPromise = new Promise((resolve, reject) => {
                         uploadTask.on('state_changed',
                             (snapshot) => {
                                 const fileProgress = (snapshot.bytesTransferred / snapshot.totalBytes);
                                 const totalProgress = ((uploaded + fileProgress) / totalFiles) * 100;
                                 progressBar.style.width = totalProgress + '%';
                             },
-                            reject,
-                            resolve
+                            (error) => reject(error),
+                            () => resolve()
                         );
                     });
+
+                    // Таймаут 45 секунд, чтобы не ждать бесконечно
+                    const timeoutPromise = new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Таймаут загрузки. Проверьте интернет или настройки базы данных.')), 45000)
+                    );
+
+                    await Promise.race([uploadPromise, timeoutPromise]);
 
                     const imageUrl = await storageRef.getDownloadURL();
 
@@ -2824,7 +2836,7 @@
            IMAGE COMPRESSION
            ============================================ */
         function compressImage(file, maxSize, quality) {
-            return new Promise((resolve) => {
+            return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     const img = new Image();
@@ -2848,11 +2860,14 @@
                         ctx.drawImage(img, 0, 0, width, height);
 
                         canvas.toBlob((blob) => {
-                            resolve(blob);
+                            if (blob) resolve(blob);
+                            else reject(new Error('Ошибка при конвертации изображения'));
                         }, 'image/jpeg', quality);
                     };
+                    img.onerror = () => reject(new Error('Ошибка загрузки изображения в память'));
                     img.src = e.target.result;
                 };
+                reader.onerror = () => reject(new Error('Ошибка чтения файла'));
                 reader.readAsDataURL(file);
             });
         }
