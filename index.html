@@ -102,19 +102,22 @@
             flex-direction: column;
             align-items: center;
             position: relative; 
-            transform: scale(0.65);
+            transform: scale(0.65); /* Уменьшаем масштаб на 35% для отступов от краев */
             animation: splashFloat 3s ease-in-out infinite;
         }
 
+        /* Плавное парение (без фильтра, чтобы не портить маску) */
         @keyframes splashFloat {
             0%, 100% { transform: scale(0.65) translateY(0); }
             50% { transform: scale(0.68) translateY(-10px); }
         }
 
+        /* Добавляем неоновое свечение напрямую на SVG */
         .splash-logo-container svg {
             filter: drop-shadow(0 0 12px rgba(255, 107, 0, 0.4));
         }
 
+        /* Анимация: резкое смыкание (снэп) и раскрытие ножниц */
         @keyframes snipA {
             0%, 100% { transform: rotate(4deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
             50% { transform: rotate(-12deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
@@ -135,8 +138,9 @@
             animation: snipB 1.8s infinite;
         }
 
+        /* Маска, которая перекрывает нижнее колесо при анимации */
         .splash-text-wrapper {
-            background-color: var(--bg-primary);
+            background-color: var(--bg-primary); /* Сливается с фоном, закрывая SVG */
             position: relative;
             z-index: 10;
             width: 100%;
@@ -150,10 +154,11 @@
             font-size: 32px;
             letter-spacing: 8px;
             font-weight: 800;
-            margin-left: 8px;
+            margin-left: 8px; /* Выравнивание с учетом letter-spacing */
             text-shadow: 0 0 20px var(--orange-glow);
         }
 
+        /* Красивая неоновая полоса загрузки */
         .splash-line {
             width: 140px;
             height: 4px;
@@ -230,6 +235,9 @@
             z-index: 1;
         }
 
+        /* ============================================
+           SECTION STYLES
+           ============================================ */
         .section {
             padding: 60px 20px;
             position: relative;
@@ -260,6 +268,7 @@
             margin-bottom: 32px;
         }
 
+        /* Animate on scroll */
         .animate-in {
             opacity: 0;
             transform: translateY(30px);
@@ -389,6 +398,7 @@
             text-decoration: none;
             position: relative;
             overflow: hidden;
+            width: 100%;
         }
 
         .btn i {
@@ -1098,37 +1108,8 @@
         }
 
         /* ============================================
-           REFERRAL / CTA SECTION
+           CTA SECTION
            ============================================ */
-        .referral-card {
-            background: var(--bg-card);
-            border: 1px solid var(--orange-subtle);
-            border-radius: var(--radius);
-            padding: 24px 20px;
-            text-align: center;
-            margin-bottom: 24px;
-            box-shadow: 0 0 20px rgba(255, 107, 0, 0.1);
-        }
-
-        .referral-icon {
-            font-size: 32px;
-            color: var(--orange);
-            margin-bottom: 12px;
-        }
-
-        .referral-title {
-            font-size: 18px;
-            font-weight: 800;
-            margin-bottom: 8px;
-        }
-
-        .referral-text {
-            font-size: 13px;
-            color: var(--text-secondary);
-            line-height: 1.5;
-            margin-bottom: 16px;
-        }
-
         .cta-section {
             text-align: center;
             position: relative;
@@ -1170,14 +1151,6 @@
             max-width: 300px;
             margin: 0 auto;
             position: relative;
-        }
-
-        .tg-channel-box {
-            margin-top: 32px;
-            position: relative;
-            z-index: 2;
-            display: flex;
-            justify-content: center;
         }
 
         /* ============================================
@@ -1564,10 +1537,11 @@
                 <a href="https://calendar.app.google/d3LC7DGE1F7FjoW88" class="btn btn-primary book-btn">
                     <i class="ph-fill ph-scissors"></i> Записаться на стрижку
                 </a>
-                <!-- Нативная ссылка на звонок (без JS перехватчика) -->
-                <a href="tel:+79514469597" class="btn btn-outline call-btn-native">
+                
+                <!-- Кнопка вызова, обрабатываемая через JS Хак -->
+                <button class="btn btn-outline call-btn">
                     <i class="ph-fill ph-phone"></i> Позвонить
-                </a>
+                </button>
             </div>
         </section>
 
@@ -1835,38 +1809,21 @@
 
         <div class="section-divider"></div>
 
-        <!-- CTA & REFERRAL -->
+        <!-- CTA -->
         <section class="section cta-section" id="cta">
             <div class="animate-in">
                 <h2 class="cta-title">Запишись на <span class="text-orange">удобное время</span></h2>
                 <p class="cta-text">Барбер приедет к тебе со всем оборудованием и сделает стрижку дома.</p>
             </div>
             
-            <!-- REFERRAL CARD -->
-            <div class="referral-card animate-in">
-                <div class="referral-icon"><i class="ph-fill ph-gift"></i></div>
-                <h3 class="referral-title">Приведи друга — получи скидку!</h3>
-                <p class="referral-text">Отправь другу уникальную ссылку. Если он перейдет и запишется на стрижку, ты получишь скидку!</p>
-                <button class="btn btn-primary w-full" onclick="shareReferralLink()">
-                    <i class="ph-bold ph-share-network"></i> Поделиться ссылкой
-                </button>
-            </div>
-
             <div class="cta-buttons animate-in">
                 <a href="https://calendar.app.google/d3LC7DGE1F7FjoW88" class="btn btn-primary book-btn">
                     <i class="ph-fill ph-scissors"></i> Записаться
                 </a>
-                <!-- Нативная ссылка на звонок -->
-                <a href="tel:+79514469597" class="btn btn-outline call-btn-native">
+                <!-- Кнопка вызова, обрабатываемая через JS Хак -->
+                <button class="btn btn-outline call-btn">
                     <i class="ph-fill ph-phone"></i> Позвонить
-                </a>
-            </div>
-
-            <!-- TELEGRAM CHANNEL LINK -->
-            <div class="tg-channel-box animate-in">
-                <a href="ВСТАВЬТЕ_ССЫЛКУ_НА_КАНАЛ_СЮДА" target="_blank" class="btn btn-outline" style="width: 100%; border-color: #2AABEE; color: #2AABEE;">
-                    <i class="ph-fill ph-telegram-logo"></i> Подписаться на наш Телеграм
-                </a>
+                </button>
             </div>
         </section>
 
@@ -2083,7 +2040,6 @@
         /* ============================================
            INITIALIZE
            ============================================ */
-        // Firebase Init
         let db;
         let firebaseReady = false;
 
@@ -2091,7 +2047,6 @@
         const tg = window.Telegram?.WebApp;
         let isAdmin = false;
         let currentUserId = null;
-        let currentUserName = "Неизвестно";
 
         if (tg) {
             tg.ready();
@@ -2100,7 +2055,6 @@
             const user = tg.initDataUnsafe?.user;
             if (user) {
                 currentUserId = user.id;
-                currentUserName = user.first_name || "Пользователь";
                 isAdmin = ADMIN_IDS.includes(user.id);
             }
 
@@ -2119,10 +2073,8 @@
             db = firebase.firestore();
             firebaseReady = true;
 
-            // Анонимная авторизация (важна для обхода дефолтных правил Firebase)
-            firebase.auth().signInAnonymously().catch(e => {
-                console.warn('Auth error:', e);
-            });
+            // Анонимная авторизация
+            firebase.auth().signInAnonymously().catch(e => console.warn('Auth error:', e));
 
             // Не ждем авторизации и загружаем данные сразу синхронно
             loadPortfolio();
@@ -2130,12 +2082,8 @@
             loadDistricts();
             loadBarberInfo();
             
-            // Проверяем реферальную ссылку (параметр start_param из Telegram)
-            processReferral();
-            
         } catch (e) {
             console.warn('Firebase init error:', e);
-            // Если совсем ошибка подключения, показываем хотя бы дефолтные данные
             loadPortfolio();
             loadPricing();
             loadDistricts();
@@ -2145,74 +2093,6 @@
         let portfolioItems = [];
         let selectedFiles = [];
         let currentFilter = 'all';
-
-        /* ============================================
-           REFERRAL SYSTEM LOGIC
-           ============================================ */
-        async function processReferral() {
-            if (!tg || !currentUserId || !firebaseReady) return;
-            
-            // Получаем скрытый параметр при старте бота (передается при переходе по реф. ссылке)
-            const startParam = tg.initDataUnsafe?.start_param;
-            
-            if (startParam && startParam.startsWith('ref_')) {
-                const referrerId = startParam.replace('ref_', '');
-                
-                // Проверяем, что пользователь не перешел по собственной ссылке
-                if (referrerId && referrerId != currentUserId) {
-                    try {
-                        const refDocRef = db.collection('referrals').doc(`${referrerId}_${currentUserId}`);
-                        const refDoc = await refDocRef.get();
-                        
-                        // Записываем, только если такой пары еще нет в БД
-                        if (!refDoc.exists) {
-                            await refDocRef.set({
-                                referrerId: referrerId,
-                                invitedId: currentUserId,
-                                invitedName: currentUserName,
-                                timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                                status: "joined"
-                            });
-                            
-                            // Показываем радостное уведомление
-                            setTimeout(() => {
-                                if (tg.showAlert) {
-                                    tg.showAlert('🎉 Вы перешли по ссылке от друга!\nВам начислена скидка на первую стрижку!');
-                                } else {
-                                    alert('🎉 Вы перешли по ссылке от друга!\nВам начислена скидка на первую стрижку!');
-                                }
-                                haptic('success');
-                            }, 1500);
-                        }
-                    } catch(e) {
-                        console.error('Ошибка записи реферала', e);
-                    }
-                }
-            }
-        }
-
-        function shareReferralLink() {
-            if (!currentUserId) {
-                if(tg && tg.showAlert) tg.showAlert("Для получения ссылки нужно открыть приложение через Telegram!");
-                else alert("Для получения ссылки нужно открыть приложение через Telegram!");
-                return;
-            }
-            haptic('medium');
-            
-            // ВАЖНО: Замените 'WheelBarber_bot/app' на юзернейм ВАШЕГО бота и короткое имя WebApp
-            // Например: 'WheelBarber_bot/app'
-            const botAppName = 'ВСТАВЬТЕ_ИМЯ_ВАШЕГО_БОТА_СЮДА'; // <--- ТУТ МЕНЯТЬ
-            
-            const botLink = `https://t.me/${botAppName}?startapp=ref_${currentUserId}`;
-            const shareText = `Привет! Записывайся на стрижку с выездом на дом через WheelBarber и получи скидку!`;
-            const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(botLink)}&text=${encodeURIComponent(shareText)}`;
-            
-            if (tg && tg.openTelegramLink) {
-                tg.openTelegramLink(shareUrl);
-            } else {
-                window.open(shareUrl, '_blank');
-            }
-        }
 
         /* ============================================
            SPLASH SCREEN & DATA LOADING
@@ -2332,11 +2212,28 @@
             });
         });
 
-        // Кнопка нативного звонка без e.preventDefault(), чтобы Айфон смог обработать `tel:`
-        document.querySelectorAll('.call-btn-native').forEach(btn => {
-            btn.addEventListener('click', () => {
+        // Хак для обхода жесткой блокировки tel: на iPhone в Telegram Web App
+        document.querySelectorAll('.call-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation(); // Важно: не даем перехватчику Телеграма съесть этот клик
                 haptic('light');
-                // Ничего больше не делаем, нативная HTML ссылка <a href="tel:..."> сама вызовет меню звонка
+                
+                // Программно создаем невидимую ссылку
+                const link = document.createElement('a');
+                link.href = `tel:${PHONE_NUMBER}`;
+                link.target = '_blank'; // Попытка вырваться в новую вкладку (Safari)
+                link.rel = 'noopener noreferrer';
+                
+                // Инжектим в DOM, кликаем и сразу удаляем
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                // На всякий случай дублируем старым методом, если первый заглохнет
+                setTimeout(() => {
+                    window.location.href = `tel:${PHONE_NUMBER}`;
+                }, 150);
             });
         });
 
