@@ -2351,14 +2351,15 @@
 
         function acceptPrivacyAndBook() {
             haptic('success');
-            closePrivacyModal();
-            if (pendingBookingUrl) {
+            const urlToOpen = pendingBookingUrl; // Сначала сохраняем ссылку
+            closePrivacyModal(); // Эта функция очистит pendingBookingUrl, но наша ссылка уже спасена в urlToOpen
+            
+            if (urlToOpen) {
                 if (tg && tg.openLink) {
-                    tg.openLink(pendingBookingUrl);
+                    tg.openLink(urlToOpen);
                 } else {
-                    window.open(pendingBookingUrl, '_blank');
+                    window.location.href = urlToOpen; // Для телефонов лучше использовать location.href вместо window.open
                 }
-                pendingBookingUrl = '';
             }
         }
 
