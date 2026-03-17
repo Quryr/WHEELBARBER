@@ -2066,6 +2066,11 @@
                 <label>Скидка (%)</label>
                 <input type="number" id="promoDiscountInput" placeholder="Например: 15" min="1" max="100">
             </div>
+            
+            <div class="form-group">
+                <label>Количество активаций (0 = безлимит)</label>
+                <input type="number" id="promoUsesInput" placeholder="Например: 10" min="0">
+            </div>
 
             <button class="btn btn-primary" style="width:100%;" onclick="savePromo()">
                 <i class="ph-bold ph-check"></i> Сохранить
@@ -2546,6 +2551,7 @@
                 <div class="promo-admin-item">
                     <div>
                         <strong>${p.code}</strong> <span style="color: var(--orange);">(-${p.discount}%)</span>
+                        ${p.maxUses > 0 ? `<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Активаций: ${p.currentUses || 0} / ${p.maxUses}</div>` : `<div style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Безлимитный</div>`}
                     </div>
                     <button class="admin-icon-btn delete" onclick="deletePromo('${p.id}')" style="width: 28px; height: 28px;"><i class="ph ph-trash"></i></button>
                 </div>
@@ -2555,6 +2561,7 @@
         function openPromoModal() {
             document.getElementById('promoCodeInput').value = '';
             document.getElementById('promoDiscountInput').value = '';
+            document.getElementById('promoUsesInput').value = '';
             document.getElementById('promoModal').classList.add('show');
             haptic('medium');
         }
@@ -2570,8 +2577,9 @@
         async function savePromo() {
             const code = document.getElementById('promoCodeInput').value.trim().toUpperCase();
             const discount = parseInt(document.getElementById('promoDiscountInput').value.trim());
+            const maxUses = parseInt(document.getElementById('promoUsesInput').value.trim()) || 0;
 
-            if (!code || isNaN(discount) || discount < 1 || discount > 100) {
+            if (!code || isNaN(discount) || discount < 1 || discount > 100 || maxUses < 0) {
                 if(tg) tg.showAlert('Введите корректный промокод и скидку от 1 до 100');
                 else alert('Введите корректный промокод и скидку от 1 до 100');
                 return;
@@ -2583,6 +2591,8 @@
                 await db.collection('promocodes').add({
                     code: code,
                     discount: discount,
+                    maxUses: maxUses,
+                    currentUses: 0,
                     createdAt: firebase.firestore.FieldValue.serverTimestamp()
                 });
                 haptic('success');
@@ -2601,13 +2611,19 @@
             });
             if (!confirmed) return;
 
+            // Мгновенное удаление из интерфейса для плавности
+            allPromocodes = allPromocodes.filter(p => p.id !== id);
+            renderAdminPromocodes();
+
             try {
+                // Удаление из базы в фоне
                 await db.collection('promocodes').doc(id).delete();
                 haptic('success');
-                loadPromocodes();
             } catch (e) {
                 console.error("Error deleting promo", e);
                 haptic('error');
+                // В случае ошибки возвращаем обратно данные из БД
+                loadPromocodes();
             }
         }
 
@@ -2621,6 +2637,13 @@
             const foundPromo = allPromocodes.find(p => p.code === code);
             
             if (foundPromo) {
+                if (foundPromo.maxUses > 0 && (foundPromo.currentUses || 0) >= foundPromo.maxUses) {
+                    status.textContent = '❌ Промокод больше не действителен (лимит исчерпан)';
+                    status.style.color = '#ef4444';
+                    haptic('error');
+                    return;
+                }
+
                 activeDiscount = foundPromo.discount;
                 renderPricing(currentServices); // Перерисовываем цены
                 
@@ -2631,6 +2654,14 @@
                 
                 haptic('success');
                 sendPromoNotificationToAdmins(foundPromo.code, activeDiscount);
+
+                // Увеличиваем счетчик активаций в фоне
+                if (foundPromo.id && firebaseReady) {
+                    db.collection('promocodes').doc(foundPromo.id).update({
+                        currentUses: firebase.firestore.FieldValue.increment(1)
+                    }).catch(e => console.error("Error incrementing promo use", e));
+                }
+
             } else {
                 status.textContent = '❌ Промокод не найден';
                 status.style.color = '#ef4444';
