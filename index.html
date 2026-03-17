@@ -666,8 +666,8 @@
         }
 
         .barber-avatar {
-            width: 100px;
-            height: 100px;
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
             border: 3px solid var(--orange);
             box-shadow: 0 0 30px var(--orange-glow);
@@ -677,8 +677,19 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 40px;
-            overflow: hidden; /* Важно для скругления фото */
+            font-size: 44px;
+            position: relative;
+            overflow: hidden; /* Клипаем изображение внутри */
+        }
+
+        .barber-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 2;
         }
 
         .barber-badge {
@@ -713,8 +724,8 @@
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            padding: 15px 5px; /* Added padding to prevent box-shadow clipping */
-            margin: -15px -5px 15px -5px; /* Offset padding to maintain layout */
+            padding: 15px 5px;
+            margin: -15px -5px 15px -5px;
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
@@ -736,7 +747,6 @@
             cursor: pointer;
             transition: var(--transition);
             white-space: nowrap;
-            /* Fix font jittering / pixelation on click/active */
             transform: translateZ(0);
             backface-visibility: hidden;
             -webkit-font-smoothing: antialiased;
@@ -806,7 +816,6 @@
             color: var(--text-muted);
         }
 
-        /* Admin delete button */
         .portfolio-delete {
             position: absolute;
             top: 8px;
@@ -919,7 +928,6 @@
             white-space: nowrap;
         }
 
-        /* Admin Actions */
         .admin-actions-inline {
             display: none;
             gap: 8px;
@@ -1522,7 +1530,6 @@
                 Теперь профессиональная мужская стрижка может быть прямо у тебя дома.
             </p>
             <div class="hero-buttons">
-                <!-- ССЫЛКА НА GOOGLE CALENDAR И ИКОНКА SCISSORS -->
                 <a href="https://calendar.app.google/d3LC7DGE1F7FjoW88" class="btn btn-primary book-btn">
                     <i class="ph-fill ph-scissors"></i> Записаться на стрижку
                 </a>
@@ -1661,7 +1668,8 @@
 
             <div class="barber-card animate-in">
                 <div class="barber-avatar" id="barberAvatarContainer">
-                    <i class="ph-fill ph-scissors"></i>
+                    <i class="ph-fill ph-scissors" id="barberDefaultIcon"></i>
+                    <img id="barberAvatarImg" src="" style="display:none;" alt="Фото барбера">
                 </div>
                 <div class="barber-badge"><i class="ph-fill ph-star"></i> Опыт работы: 3 года</div>
                 <h3 class="barber-name" id="barberNameDisplay">Мастер мужских стрижек</h3>
@@ -1945,17 +1953,20 @@
             <button class="modal-close" onclick="closeBarberModal()" style="position:relative; margin-left:auto; margin-bottom:8px;"><i class="ph-bold ph-x"></i></button>
             <h3>Редактировать <span>профиль</span></h3>
             
-            <!-- Загрузка фото барбера -->
-            <div class="upload-area" id="barberUploadArea" style="margin-bottom: 16px; padding: 20px;">
-                <div class="upload-icon"><i class="ph-fill ph-camera"></i></div>
-                <div class="upload-text">Выбрать фото барбера</div>
-            </div>
-            <input type="file" id="barberFileInput" accept="image/*" style="display:none;">
-            
-            <div id="barberPreviewContainer" style="display:none; text-align:center; margin-bottom: 20px;">
-                <img id="barberPreviewImg" src="" alt="Превью" style="width:100px; height:100px; border-radius:50%; object-fit:cover; border: 3px solid var(--orange);">
-                <br>
-                <button class="btn btn-outline btn-small" onclick="clearBarberPhoto()" style="margin: 12px auto 0; padding: 6px 12px;">Удалить выбранное фото</button>
+            <div class="form-group">
+                <label>Фото барбера</label>
+                
+                <div class="upload-area" id="barberPhotoUploadArea" style="padding: 16px 10px; margin-bottom: 0;">
+                    <div class="upload-icon" style="font-size: 24px; margin-bottom: 4px;"><i class="ph-fill ph-camera"></i></div>
+                    <div class="upload-text">Выбрать фото</div>
+                </div>
+                
+                <input type="file" id="barberPhotoInputHidden" accept="image/*" style="display:none;">
+                
+                <div id="barberPhotoPreviewContainer" style="display: none; margin-top: 10px; text-align: center;">
+                    <img id="barberPhotoPreviewImg" src="" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid var(--orange);">
+                    <button class="btn btn-outline btn-small mt-12" id="removeBarberPhotoBtn" style="width: 100%;">Удалить фото</button>
+                </div>
             </div>
 
             <div class="form-group">
@@ -1984,7 +1995,7 @@
         const ADMIN_IDS = [1262669099, 5215828279];
         const PHONE_NUMBER = '+79514469597';
 
-        // Изначальный список услуг, если БД пустая
+        // Изначальный список услуг
         const DEFAULT_SERVICES = [
             { name: "Стрижка машинкой", price: 1000, order: 1 },
             { name: "Классическая стрижка", price: 1400, order: 2 },
@@ -2001,7 +2012,7 @@
         ];
 
         // Изначальный профиль барбера
-        const DEFAULT_BARBER = {
+        let currentBarberData = {
             name: "Анна",
             role: "Мастер мужских стрижек",
             imageUrl: null
@@ -2030,12 +2041,33 @@
             db = firebase.firestore();
             storage = firebase.storage();
             
-            // Анонимная авторизация для обхода правил Firebase (если они требуют auth != null)
-            firebase.auth().signInAnonymously().catch(e => console.warn('Auth error:', e));
+            // Ждем успешной авторизации перед запросами к БД (исправляет ошибку Missing Permissions)
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user && !firebaseReady) {
+                    firebaseReady = true;
+                    loadPortfolio();
+                    loadPricing();
+                    loadDistricts();
+                    loadBarberInfo();
+                }
+            });
+
+            // Анонимная авторизация (важна для обхода дефолтных правил Firebase)
+            firebase.auth().signInAnonymously().catch(e => {
+                console.warn('Auth error:', e);
+                // В случае ошибки показываем дефолтные данные
+                loadPortfolio();
+                loadPricing();
+                loadDistricts();
+                loadBarberInfo();
+            });
             
-            firebaseReady = true;
         } catch (e) {
             console.warn('Firebase init error:', e);
+            loadPortfolio();
+            loadPricing();
+            loadDistricts();
+            loadBarberInfo();
         }
 
         // Telegram WebApp Init
@@ -2073,12 +2105,8 @@
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('splash').classList.add('hidden');
-            }, 2500); // Немного увеличил время для красивой анимации ножниц
-
-            loadPortfolio();
-            loadPricing();
-            loadDistricts();
-            loadBarberInfo();
+            }, 2500); 
+            // Загрузка данных перенесена в onAuthStateChanged для избежания ошибки прав доступа
         });
 
         /* ============================================
@@ -2190,13 +2218,11 @@
             });
         });
 
-        // Update phone links + iOS Fix via JS Native redirect instead of direct link execution
         document.querySelectorAll('[href^="tel:"]').forEach(link => {
             link.href = `tel:${PHONE_NUMBER}`;
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 haptic('light');
-                // Telegram WebApp iOS Safari fix - trigger redirection manually
                 if (tg && tg.openLink) {
                     try {
                         tg.openLink(`tel:${PHONE_NUMBER}`);
@@ -2212,76 +2238,94 @@
         /* ============================================
            BARBER PROFILE MANAGEMENT (FIREBASE)
            ============================================ */
-        let selectedBarberFile = null;
+        let newBarberPhotoDataUrl = null;
+        let removeBarberPhotoFlag = false;
 
         async function loadBarberInfo() {
             if (!firebaseReady) {
-                renderBarberInfo(DEFAULT_BARBER);
+                renderBarberInfo(currentBarberData);
                 return;
             }
             try {
                 const doc = await db.collection('settings').doc('barberProfile').get();
                 if (!doc.exists) {
-                    await db.collection('settings').doc('barberProfile').set(DEFAULT_BARBER);
-                    renderBarberInfo(DEFAULT_BARBER);
+                    await db.collection('settings').doc('barberProfile').set(currentBarberData);
+                    renderBarberInfo(currentBarberData);
                 } else {
                     renderBarberInfo(doc.data());
                 }
             } catch(e) {
                 console.error("Error loading barber info", e);
-                renderBarberInfo(DEFAULT_BARBER);
+                renderBarberInfo(currentBarberData);
             }
         }
 
         function renderBarberInfo(data) {
+            currentBarberData = data;
+            
             const titleEl = document.getElementById('barberNameTitle');
             const displayEl = document.getElementById('barberNameDisplay');
-            const avatarContainer = document.getElementById('barberAvatarContainer');
+            const avatarImg = document.getElementById('barberAvatarImg');
+            const defaultIcon = document.getElementById('barberDefaultIcon');
 
             if (titleEl) titleEl.textContent = data.name || 'Анна';
             if (displayEl) displayEl.textContent = data.role || 'Мастер мужских стрижек';
 
-            if (avatarContainer) {
-                if (data.imageUrl) {
-                    avatarContainer.innerHTML = `<img src="${data.imageUrl}" alt="${data.name}" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
-                    avatarContainer.style.background = 'transparent';
-                    avatarContainer.style.border = '3px solid var(--orange)';
-                } else {
-                    avatarContainer.innerHTML = '<i class="ph-fill ph-scissors"></i>';
-                    avatarContainer.style.background = 'var(--bg-secondary)';
+            if (data.imageUrl) {
+                avatarImg.src = data.imageUrl;
+                avatarImg.style.display = 'block';
+                defaultIcon.style.display = 'none';
+            } else {
+                avatarImg.src = '';
+                avatarImg.style.display = 'none';
+                defaultIcon.style.display = 'block';
+            }
+        }
+
+        // Логика загрузки фото в модалке Барбера
+        document.getElementById('barberPhotoUploadArea').addEventListener('click', () => {
+            document.getElementById('barberPhotoInputHidden').click();
+        });
+
+        document.getElementById('barberPhotoInputHidden').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                try {
+                    newBarberPhotoDataUrl = await compressImage(file, 800, 0.8);
+                    document.getElementById('barberPhotoPreviewImg').src = newBarberPhotoDataUrl;
+                    document.getElementById('barberPhotoPreviewContainer').style.display = 'block';
+                    document.getElementById('barberPhotoUploadArea').style.display = 'none';
+                    removeBarberPhotoFlag = false;
+                } catch (err) {
+                    console.error("Image compression error", err);
                 }
             }
-        }
-
-        document.getElementById('barberUploadArea').addEventListener('click', () => {
-            document.getElementById('barberFileInput').click();
         });
 
-        document.getElementById('barberFileInput').addEventListener('change', (e) => {
-            if (e.target.files && e.target.files[0]) {
-                selectedBarberFile = e.target.files[0];
-                const url = URL.createObjectURL(selectedBarberFile);
-                document.getElementById('barberPreviewImg').src = url;
-                document.getElementById('barberPreviewContainer').style.display = 'block';
-                document.getElementById('barberUploadArea').style.display = 'none';
-            }
+        document.getElementById('removeBarberPhotoBtn').addEventListener('click', () => {
+            newBarberPhotoDataUrl = null;
+            removeBarberPhotoFlag = true;
+            document.getElementById('barberPhotoPreviewContainer').style.display = 'none';
+            document.getElementById('barberPhotoUploadArea').style.display = 'block';
+            document.getElementById('barberPhotoInputHidden').value = '';
         });
-
-        function clearBarberPhoto() {
-            selectedBarberFile = null;
-            document.getElementById('barberFileInput').value = '';
-            document.getElementById('barberPreviewImg').src = '';
-            document.getElementById('barberPreviewContainer').style.display = 'none';
-            document.getElementById('barberUploadArea').style.display = 'block';
-        }
 
         function openBarberModal() {
-            const currentName = document.getElementById('barberNameTitle').textContent;
-            const currentRole = document.getElementById('barberNameDisplay').textContent;
-            document.getElementById('barberNameInput').value = currentName;
-            document.getElementById('barberRoleInput').value = currentRole;
+            document.getElementById('barberNameInput').value = currentBarberData.name || '';
+            document.getElementById('barberRoleInput').value = currentBarberData.role || '';
             
-            clearBarberPhoto();
+            newBarberPhotoDataUrl = null;
+            removeBarberPhotoFlag = false;
+
+            if (currentBarberData.imageUrl) {
+                document.getElementById('barberPhotoPreviewImg').src = currentBarberData.imageUrl;
+                document.getElementById('barberPhotoPreviewContainer').style.display = 'block';
+                document.getElementById('barberPhotoUploadArea').style.display = 'none';
+            } else {
+                document.getElementById('barberPhotoPreviewContainer').style.display = 'none';
+                document.getElementById('barberPhotoUploadArea').style.display = 'block';
+            }
+
             document.getElementById('barberModal').classList.add('show');
             haptic('medium');
         }
@@ -2311,66 +2355,50 @@
             btn.innerHTML = '<i class="ph-bold ph-spinner"></i> Сохранение...';
 
             try {
-                let updateData = { name, role };
-                
-                // Получаем текущие данные, чтобы знать о старом фото
-                const doc = await db.collection('settings').doc('barberProfile').get();
-                const currentData = doc.exists ? doc.data() : {};
+                let finalImageUrl = currentBarberData.imageUrl;
 
-                if (selectedBarberFile) {
-                    // Сжимаем и загружаем новое фото
-                    const compressedFile = await compressImage(selectedBarberFile, 800, 0.8);
+                // Если нужно удалить старое фото
+                if (removeBarberPhotoFlag) {
+                    finalImageUrl = null;
+                } 
+                // Если загружено новое фото
+                else if (newBarberPhotoDataUrl) {
                     const timestamp = Date.now();
-                    const safeName = selectedBarberFile.name.replace(/[^a-zA-Z0-9.]/g, '_');
-                    const storagePath = `barber_avatars/${timestamp}_${safeName}.jpg`;
-                    const storageRef = storage.ref(storagePath);
-
-                    await storageRef.put(compressedFile, { contentType: 'image/jpeg' });
-                    const imageUrl = await storageRef.getDownloadURL();
-
-                    updateData.imageUrl = imageUrl;
-                    updateData.storagePath = storagePath;
-
-                    // Удаляем старое фото из хранилища для экономии места
-                    if (currentData.storagePath) {
-                        try {
-                            await storage.ref(currentData.storagePath).delete();
-                        } catch (e) {
-                            console.warn('Не удалось удалить старое фото барбера:', e);
-                        }
-                    }
+                    const storageRef = storage.ref(`barber/avatar_${timestamp}.jpg`);
+                    // Используем putString для Base64
+                    await storageRef.putString(newBarberPhotoDataUrl, 'data_url');
+                    finalImageUrl = await storageRef.getDownloadURL();
                 }
 
-                await db.collection('settings').doc('barberProfile').set(updateData, { merge: true });
+                await db.collection('settings').doc('barberProfile').set({ 
+                    name, 
+                    role,
+                    imageUrl: finalImageUrl
+                }, { merge: true });
+                
                 haptic('success');
                 closeBarberModal();
                 loadBarberInfo();
             } catch(e) {
                 console.error(e);
                 haptic('error');
-                if (tg) tg.showAlert('Ошибка сохранения: ' + e.message);
-                else alert('Ошибка сохранения: ' + e.message);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="ph-bold ph-check"></i> Сохранить';
             }
         }
 
-
         /* ============================================
            PRICING MANAGEMENT (FIREBASE)
            ============================================ */
         async function loadPricing() {
             const listContainer = document.getElementById('pricingList');
-            
             if (!firebaseReady) {
                 renderPricing(DEFAULT_SERVICES);
                 return;
             }
-
             try {
                 const snapshot = await db.collection('services').orderBy('order', 'asc').get();
-                
                 if (snapshot.empty) {
                     for (const s of DEFAULT_SERVICES) {
                         await db.collection('services').add({
@@ -2382,12 +2410,10 @@
                     }
                     return loadPricing();
                 }
-
                 const services = [];
                 snapshot.forEach(doc => {
                     services.push({ id: doc.id, ...doc.data() });
                 });
-
                 renderPricing(services);
             } catch (e) {
                 console.error('Error loading services:', e);
@@ -2411,7 +2437,6 @@
                     ` : ''}
                 </div>
             `).join('');
-
             document.querySelectorAll('[data-price]').forEach(el => priceObserver.observe(el));
         }
 
@@ -2446,7 +2471,6 @@
                 else alert('Заполните все поля корректно');
                 return;
             }
-
             if (!firebaseReady) return;
 
             const btn = document.getElementById('serviceSubmitBtn');
@@ -2469,7 +2493,6 @@
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
-                
                 haptic('success');
                 closeServiceModal();
                 loadPricing();
@@ -2484,12 +2507,10 @@
 
         async function deleteService(id) {
             if (!id || !isAdmin) return;
-            
             const confirmed = await new Promise((resolve) => {
                 if (tg) tg.showConfirm('Точно удалить услугу?', resolve);
                 else resolve(confirm('Точно удалить услугу?'));
             });
-
             if (!confirmed) return;
 
             try {
@@ -2507,15 +2528,12 @@
            ============================================ */
         async function loadDistricts() {
             const gridContainer = document.getElementById('districtsGrid');
-            
             if (!firebaseReady) {
                 renderDistricts(DEFAULT_DISTRICTS);
                 return;
             }
-
             try {
                 const snapshot = await db.collection('districts').orderBy('order', 'asc').get();
-                
                 if (snapshot.empty) {
                     for (const d of DEFAULT_DISTRICTS) {
                         await db.collection('districts').add({
@@ -2526,12 +2544,10 @@
                     }
                     return loadDistricts();
                 }
-
                 const districts = [];
                 snapshot.forEach(doc => {
                     districts.push({ id: doc.id, ...doc.data() });
                 });
-
                 renderDistricts(districts);
             } catch (e) {
                 console.error('Error loading districts:', e);
@@ -2585,7 +2601,6 @@
                 else alert('Введите название района');
                 return;
             }
-
             if (!firebaseReady) return;
 
             const btn = document.getElementById('districtSubmitBtn');
@@ -2607,7 +2622,6 @@
                         createdAt: firebase.firestore.FieldValue.serverTimestamp()
                     });
                 }
-                
                 haptic('success');
                 closeDistrictModal();
                 loadDistricts();
@@ -2622,12 +2636,10 @@
 
         async function deleteDistrict(id) {
             if (!id || !isAdmin) return;
-            
             const confirmed = await new Promise((resolve) => {
                 if (tg) tg.showConfirm('Точно удалить район?', resolve);
                 else resolve(confirm('Точно удалить район?'));
             });
-
             if (!confirmed) return;
 
             try {
@@ -2674,7 +2686,6 @@
            ============================================ */
         async function loadPortfolio() {
             const grid = document.getElementById('portfolioGrid');
-
             if (!firebaseReady) {
                 grid.innerHTML = `
                     <div class="portfolio-empty">
@@ -2686,15 +2697,11 @@
             }
 
             try {
-                const snapshot = await db.collection('portfolio')
-                    .orderBy('createdAt', 'desc')
-                    .get();
-
+                const snapshot = await db.collection('portfolio').orderBy('createdAt', 'desc').get();
                 portfolioItems = [];
                 snapshot.forEach(doc => {
                     portfolioItems.push({ id: doc.id, ...doc.data() });
                 });
-
                 renderPortfolio();
             } catch (e) {
                 console.error('Error loading portfolio:', e);
@@ -2858,15 +2865,16 @@
 
             try {
                 for (const file of selectedFiles) {
-                    // Конвертация в File объект вместо Blob для избежания багов Firebase Compat SDK
-                    const compressedFile = await compressImage(file, 1200, 0.8);
+                    // ТЕПЕРЬ СЖАТОЕ ИЗОБРАЖЕНИЕ ВОЗВРАЩАЕТСЯ В ФОРМАТЕ BASE64 DATA URL
+                    const compressedDataUrl = await compressImage(file, 1200, 0.8);
 
                     const timestamp = Date.now();
                     const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
                     const storagePath = `portfolio/${timestamp}_${safeName}`;
                     const storageRef = storage.ref(storagePath);
 
-                    const uploadTask = storageRef.put(compressedFile, { contentType: 'image/jpeg' });
+                    // ЗАГРУЖАЕМ Base64 СТРОКУ (Это решает все проблемы с WebView в Telegram!)
+                    const uploadTask = storageRef.putString(compressedDataUrl, 'data_url');
 
                     const uploadPromise = new Promise((resolve, reject) => {
                         uploadTask.on('state_changed',
@@ -2882,7 +2890,7 @@
 
                     // Таймаут 45 секунд
                     const timeoutPromise = new Promise((_, reject) => 
-                        setTimeout(() => reject(new Error('Таймаут загрузки. Проверьте интернет или правила доступа Storage (Rules).')), 45000)
+                        setTimeout(() => reject(new Error('Таймаут загрузки. Проверьте интернет или настройки базы данных.')), 45000)
                     );
 
                     await Promise.race([uploadPromise, timeoutPromise]);
@@ -2922,7 +2930,7 @@
         }
 
         /* ============================================
-           IMAGE COMPRESSION & BLOB TO FILE FIX
+           IMAGE COMPRESSION (FIXED FOR WEBVIEW)
            ============================================ */
         function compressImage(file, maxSize, quality) {
             return new Promise((resolve, reject) => {
@@ -2935,10 +2943,10 @@
 
                         if (width > maxSize || height > maxSize) {
                             if (width > height) {
-                                height = (height / width) * maxSize;
+                                height = Math.round((height / width) * maxSize);
                                 width = maxSize;
                             } else {
-                                width = (width / height) * maxSize;
+                                width = Math.round((width / height) * maxSize);
                                 height = maxSize;
                             }
                         }
@@ -2948,17 +2956,9 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
 
-                        canvas.toBlob((blob) => {
-                            if (blob) {
-                                // ПРЕОБРАЗОВАНИЕ ОБРАТНО В FILE: исправляет баги в Firebase SDK Compat (зависание put)
-                                const newFile = new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".jpg", {
-                                    type: "image/jpeg",
-                                    lastModified: Date.now()
-                                });
-                                resolve(newFile);
-                            }
-                            else reject(new Error('Ошибка при конвертации изображения'));
-                        }, 'image/jpeg', quality);
+                        // ВОЗВРАЩАЕМ BASE64 ВМЕСТО BLOB. Blob вызывает баги во встроенном браузере Telegram!
+                        const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                        resolve(dataUrl);
                     };
                     img.onerror = () => reject(new Error('Ошибка загрузки изображения в память'));
                     img.src = e.target.result;
