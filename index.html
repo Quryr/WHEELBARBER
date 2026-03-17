@@ -2327,14 +2327,6 @@
            ============================================ */
         let pendingBookingUrl = '';
 
-        document.querySelectorAll('.book-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                haptic('medium');
-                pendingBookingUrl = btn.getAttribute('href');
-                openPrivacyModal();
-            });
-        });
 
         function openPrivacyModal() {
             document.getElementById('privacyModal').classList.add('show');
