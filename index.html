@@ -14,7 +14,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 
     <style>
         /* ============================================
@@ -2033,13 +2032,12 @@
            INITIALIZE
            ============================================ */
         // Firebase Init
-        let db, storage;
+        let db;
         let firebaseReady = false;
 
         try {
             firebase.initializeApp(firebaseConfig);
             db = firebase.firestore();
-            storage = firebase.storage();
             
             // Ждем успешной авторизации перед запросами к БД (исправляет ошибку Missing Permissions)
             firebase.auth().onAuthStateChanged((user) => {
@@ -2363,11 +2361,8 @@
                 } 
                 // Если загружено новое фото
                 else if (newBarberPhotoDataUrl) {
-                    const timestamp = Date.now();
-                    const storageRef = storage.ref(`barber/avatar_${timestamp}.jpg`);
-                    // Используем putString для Base64
-                    await storageRef.putString(newBarberPhotoDataUrl, 'data_url');
-                    finalImageUrl = await storageRef.getDownloadURL();
+                    // Используем напрямую строку Base64 вместо Storage
+                    finalImageUrl = newBarberPhotoDataUrl;
                 }
 
                 await db.collection('settings').doc('barberProfile').set({ 
@@ -2736,7 +2731,7 @@
                 <div class="portfolio-item animate-in visible" onclick="openLightbox('${item.imageUrl}')" data-category="${item.category}">
                     <img src="${item.imageUrl}" alt="${item.caption || 'Пример работы'}" loading="lazy">
                     ${item.caption ? `<div class="caption">${item.caption}</div>` : ''}
-                    ${isAdmin ? `<button class="portfolio-delete" onclick="event.stopPropagation(); deletePortfolioItem('${item.id}', '${item.storagePath}')"><i class="ph-bold ph-trash"></i></button>` : ''}
+                    ${isAdmin ? `<button class="portfolio-delete" onclick="event.stopPropagation(); deletePortfolioItem('${item.id}')"><i class="ph-bold ph-trash"></i></button>` : ''}
                 </div>
             `).join('');
         }
@@ -2835,7 +2830,7 @@
         }
 
         /* ============================================
-           UPLOAD PHOTOS TO FIREBASE
+           UPLOAD PHOTOS TO FIREBASE (FIRESTORE BASE64)
            ============================================ */
         async function uploadPhotos() {
             if (selectedFiles.length === 0) {
@@ -2865,41 +2860,12 @@
 
             try {
                 for (const file of selectedFiles) {
-                    // ТЕПЕРЬ СЖАТОЕ ИЗОБРАЖЕНИЕ ВОЗВРАЩАЕТСЯ В ФОРМАТЕ BASE64 DATA URL
+                    // СЖАТОЕ ИЗОБРАЖЕНИЕ ВОЗВРАЩАЕТСЯ В ФОРМАТЕ BASE64 DATA URL
                     const compressedDataUrl = await compressImage(file, 1200, 0.8);
 
-                    const timestamp = Date.now();
-                    const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-                    const storagePath = `portfolio/${timestamp}_${safeName}`;
-                    const storageRef = storage.ref(storagePath);
-
-                    // ЗАГРУЖАЕМ Base64 СТРОКУ (Это решает все проблемы с WebView в Telegram!)
-                    const uploadTask = storageRef.putString(compressedDataUrl, 'data_url');
-
-                    const uploadPromise = new Promise((resolve, reject) => {
-                        uploadTask.on('state_changed',
-                            (snapshot) => {
-                                const fileProgress = (snapshot.bytesTransferred / snapshot.totalBytes);
-                                const totalProgress = ((uploaded + fileProgress) / totalFiles) * 100;
-                                progressBar.style.width = totalProgress + '%';
-                            },
-                            (error) => reject(error),
-                            () => resolve()
-                        );
-                    });
-
-                    // Таймаут 45 секунд
-                    const timeoutPromise = new Promise((_, reject) => 
-                        setTimeout(() => reject(new Error('Таймаут загрузки. Проверьте интернет или настройки базы данных.')), 45000)
-                    );
-
-                    await Promise.race([uploadPromise, timeoutPromise]);
-
-                    const imageUrl = await storageRef.getDownloadURL();
-
+                    // СОХРАНЯЕМ НАПРЯМУЮ В FIRESTORE БЕЗ STORAGE
                     await db.collection('portfolio').add({
-                        imageUrl: imageUrl,
-                        storagePath: storagePath,
+                        imageUrl: compressedDataUrl,
                         category: category,
                         caption: caption,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
@@ -2930,7 +2896,7 @@
         }
 
         /* ============================================
-           IMAGE COMPRESSION (FIXED FOR WEBVIEW)
+           IMAGE COMPRESSION
            ============================================ */
         function compressImage(file, maxSize, quality) {
             return new Promise((resolve, reject) => {
@@ -2956,7 +2922,7 @@
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, width, height);
 
-                        // ВОЗВРАЩАЕМ BASE64 ВМЕСТО BLOB. Blob вызывает баги во встроенном браузере Telegram!
+                        // ВОЗВРАЩАЕМ BASE64 ВМЕСТО BLOB
                         const dataUrl = canvas.toDataURL('image/jpeg', quality);
                         resolve(dataUrl);
                     };
@@ -2971,7 +2937,7 @@
         /* ============================================
            DELETE PORTFOLIO ITEM
            ============================================ */
-        async function deletePortfolioItem(docId, storagePath) {
+        async function deletePortfolioItem(docId) {
             if (!isAdmin) return;
 
             const confirmed = await new Promise((resolve) => {
@@ -2982,15 +2948,8 @@
             if (!confirmed) return;
 
             try {
+                // Удаляем только из Firestore, так как Storage больше не используется
                 await db.collection('portfolio').doc(docId).delete();
-
-                if (storagePath) {
-                    try {
-                        await storage.ref(storagePath).delete();
-                    } catch (e) {
-                        console.warn('Storage delete error:', e);
-                    }
-                }
 
                 haptic('success');
                 loadPortfolio();
