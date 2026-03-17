@@ -2327,6 +2327,14 @@
            ============================================ */
         let pendingBookingUrl = '';
 
+        document.querySelectorAll('.book-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                haptic('medium');
+                pendingBookingUrl = btn.getAttribute('href');
+                openPrivacyModal();
+            });
+        });
 
         function openPrivacyModal() {
             document.getElementById('privacyModal').classList.add('show');
@@ -2354,7 +2362,6 @@
                 }
             }
         }
-
         // Хак для обхода жесткой блокировки tel: на iPhone в Telegram Web App
         document.querySelectorAll('.call-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
