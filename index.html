@@ -736,49 +736,11 @@
         /* ============================================
            PORTFOLIO GALLERY
            ============================================ */
-        .portfolio-filters {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            padding: 15px 5px;
-            margin: -15px -5px 15px -5px;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-        }
-
-        .portfolio-filters::-webkit-scrollbar {
-            display: none;
-        }
-
-        .filter-btn {
-            flex-shrink: 0;
-            padding: 8px 18px;
-            border-radius: 50px;
-            font-family: var(--font);
-            font-size: 12px;
-            font-weight: 600;
-            border: 1px solid var(--orange-subtle);
-            background: transparent;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: var(--transition);
-            white-space: nowrap;
-            transform: translateZ(0);
-            backface-visibility: hidden;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        .filter-btn.active {
-            background: var(--orange);
-            color: #000;
-            border-color: var(--orange);
-            box-shadow: 0 0 15px var(--orange-glow);
-        }
-
         .portfolio-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
+            margin-top: 15px;
         }
 
         .portfolio-item {
@@ -1523,6 +1485,29 @@
             width: 0%;
         }
 
+        /* Privacy Policy text */
+        .privacy-text {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            max-height: 40vh;
+            overflow-y: auto;
+            text-align: left;
+            margin-bottom: 24px;
+            background: var(--bg-primary);
+            padding: 16px;
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--orange-faint);
+        }
+        
+        .privacy-text p {
+            margin-bottom: 12px;
+        }
+        
+        .privacy-text p:last-child {
+            margin-bottom: 0;
+        }
+
         /* Hide admin elements by default */
         .admin-only {
             display: none !important;
@@ -1603,6 +1588,7 @@
                 Теперь профессиональная мужская стрижка может быть прямо у тебя дома.
             </p>
             <div class="hero-buttons">
+                <!-- Оставлен класс book-btn, логика перехвата ПД теперь в JS -->
                 <a href="https://calendar.app.google/d3LC7DGE1F7FjoW88" class="btn btn-primary book-btn">
                     <i class="ph-fill ph-scissors"></i> Записаться на стрижку
                 </a>
@@ -1774,15 +1760,7 @@
                 <i class="ph-bold ph-plus"></i> Добавить пример(ы)
             </button>
 
-            <!-- Filters -->
-            <div class="portfolio-filters animate-in">
-                <button class="filter-btn active" data-filter="all">Все</button>
-                <button class="filter-btn" data-filter="model">Модельные</button>
-                <button class="filter-btn" data-filter="classic">Классические</button>
-                <button class="filter-btn" data-filter="modern">Современные</button>
-            </div>
-
-            <!-- Gallery Grid -->
+            <!-- Gallery Grid (Без фильтров, просто сетка всех работ) -->
             <div class="portfolio-grid" id="portfolioGrid">
                 <!-- Skeleton loading -->
                 <div class="skeleton" style="aspect-ratio: 3/4;"></div>
@@ -1953,6 +1931,30 @@
     </nav>
 
     <!-- ==========================================
+         PRIVACY POLICY MODAL (СОГЛАСИЕ)
+         ========================================== -->
+    <div class="modal-overlay" id="privacyModal">
+        <div class="upload-modal">
+            <button class="modal-close" onclick="closePrivacyModal()" style="position:relative; margin-left:auto; margin-bottom:8px;"><i class="ph-bold ph-x"></i></button>
+            <h3>Согласие на обработку <span>данных</span></h3>
+            
+            <div class="privacy-text">
+                <p>Нажимая кнопку ниже, вы даете согласие на обработку ваших персональных данных в соответствии с Федеральным законом от 27.07.2006 № 152-ФЗ «О персональных данных».</p>
+                <p><strong>Перечень собираемых данных:</strong> Имя, Фамилия, Номер телефона, Адрес электронной почты, Адрес места оказания услуг (для выезда мастера).</p>
+                <p><strong>Цель обработки:</strong> Оформление записи на услуги барбера, связь с клиентом для подтверждения деталей заказа и осуществление выезда по указанному адресу.</p>
+                <p>Мы гарантируем конфиденциальность и надежную защиту ваших данных. Данные не передаются сторонним организациям и третьим лицам без вашего разрешения.</p>
+            </div>
+
+            <button class="btn btn-primary" style="width:100%; margin-bottom: 12px;" onclick="acceptPrivacyAndBook()">
+                <i class="ph-bold ph-check-circle"></i> Даю согласие
+            </button>
+            <button class="btn btn-outline" style="width:100%;" onclick="closePrivacyModal()">
+                Отмена
+            </button>
+        </div>
+    </div>
+
+    <!-- ==========================================
          LIGHTBOX MODAL
          ========================================== -->
     <div class="modal-overlay" id="lightboxModal">
@@ -1977,15 +1979,6 @@
             <input type="file" id="fileInput" multiple accept="image/*" style="display:none;">
 
             <div class="upload-previews" id="uploadPreviews"></div>
-
-            <div class="form-group">
-                <label>Категория</label>
-                <select id="uploadCategory">
-                    <option value="model">Модельные стрижки</option>
-                    <option value="classic">Классические стрижки</option>
-                    <option value="modern">Современные стили</option>
-                </select>
-            </div>
 
             <div class="form-group">
                 <label>Подпись (необязательно)</label>
@@ -2127,7 +2120,8 @@
            ============================================ */
         const ADMIN_IDS = [1262669099, 5215828279];
         const PHONE_NUMBER = '+79514469597';
-        const BOT_TOKEN = '8032487058:AAF2uqig20vSspuKkwbmyklzgxArxjXrDIE'; // Токен бота для уведомлений
+        const BOT_TOKEN = '8228159216:AAH0sg-HZxCNUu4urRINPE16jBIxkxmm_wo'; // Новый токен бота для уведомлений
+        const botAppName = 'WheelBarber_bot';
 
         // Изначальный список услуг
         const DEFAULT_SERVICES = [
@@ -2221,7 +2215,6 @@
 
         let portfolioItems = [];
         let selectedFiles = [];
-        let currentFilter = 'all';
         
         let currentServices = [];
         let allPromocodes = [];
@@ -2330,20 +2323,44 @@
         }
 
         /* ============================================
-           CALL / GOOGLE CALENDAR BUTTONS HANDLER
+           PRIVACY POLICY & GOOGLE CALENDAR LOGIC
            ============================================ */
+        let pendingBookingUrl = '';
+
         document.querySelectorAll('.book-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 haptic('medium');
-                const url = btn.getAttribute('href');
-                if (tg && tg.openLink) {
-                    tg.openLink(url);
-                } else {
-                    window.open(url, '_blank');
-                }
+                pendingBookingUrl = btn.getAttribute('href');
+                openPrivacyModal();
             });
         });
+
+        function openPrivacyModal() {
+            document.getElementById('privacyModal').classList.add('show');
+        }
+
+        function closePrivacyModal() {
+            document.getElementById('privacyModal').classList.remove('show');
+            pendingBookingUrl = '';
+        }
+        
+        document.getElementById('privacyModal').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closePrivacyModal();
+        });
+
+        function acceptPrivacyAndBook() {
+            haptic('success');
+            closePrivacyModal();
+            if (pendingBookingUrl) {
+                if (tg && tg.openLink) {
+                    tg.openLink(pendingBookingUrl);
+                } else {
+                    window.open(pendingBookingUrl, '_blank');
+                }
+                pendingBookingUrl = '';
+            }
+        }
 
         // Хак для обхода жесткой блокировки tel: на iPhone в Telegram Web App
         document.querySelectorAll('.call-btn').forEach(btn => {
@@ -2492,12 +2509,9 @@
             try {
                 let finalImageUrl = currentBarberData.imageUrl;
 
-                // Если нужно удалить старое фото
                 if (removeBarberPhotoFlag) {
                     finalImageUrl = null;
-                } 
-                // Если загружено новое фото
-                else if (newBarberPhotoDataUrl) {
+                } else if (newBarberPhotoDataUrl) {
                     finalImageUrl = newBarberPhotoDataUrl;
                 }
 
@@ -3041,10 +3055,6 @@
             const grid = document.getElementById('portfolioGrid');
             let filtered = portfolioItems;
 
-            if (currentFilter !== 'all') {
-                filtered = portfolioItems.filter(item => item.category === currentFilter);
-            }
-
             if (filtered.length === 0) {
                 grid.innerHTML = `
                     <div class="portfolio-empty">
@@ -3056,26 +3066,13 @@
             }
 
             grid.innerHTML = filtered.map(item => `
-                <div class="portfolio-item animate-in visible" onclick="openLightbox('${item.imageUrl}')" data-category="${item.category}">
+                <div class="portfolio-item animate-in visible" onclick="openLightbox('${item.imageUrl}')">
                     <img src="${item.imageUrl}" alt="${item.caption || 'Пример работы'}" loading="lazy">
                     ${item.caption ? `<div class="caption">${item.caption}</div>` : ''}
                     ${isAdmin ? `<button class="portfolio-delete" onclick="event.stopPropagation(); deletePortfolioItem('${item.id}')"><i class="ph-bold ph-trash"></i></button>` : ''}
                 </div>
             `).join('');
         }
-
-        /* ============================================
-           PORTFOLIO FILTERS
-           ============================================ */
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentFilter = btn.dataset.filter;
-                renderPortfolio();
-                haptic('light');
-            });
-        });
 
         /* ============================================
            LIGHTBOX
@@ -3173,7 +3170,6 @@
                 return;
             }
 
-            const category = document.getElementById('uploadCategory').value;
             const caption = document.getElementById('uploadCaption').value.trim();
             const progressEl = document.getElementById('uploadProgress');
             const progressBar = document.getElementById('uploadProgressBar');
@@ -3194,7 +3190,6 @@
                     // СОХРАНЯЕМ НАПРЯМУЮ В FIRESTORE БЕЗ STORAGE
                     await db.collection('portfolio').add({
                         imageUrl: compressedDataUrl,
-                        category: category,
                         caption: caption,
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         uploadedBy: currentUserId
@@ -3290,7 +3285,7 @@
         /* ============================================
            HAPTIC ON ALL BUTTONS
            ============================================ */
-        document.querySelectorAll('.btn, .filter-btn, .equipment-card, .feature-card, .price-card, .district-card, .nav-item').forEach(el => {
+        document.querySelectorAll('.btn, .equipment-card, .feature-card, .price-card, .district-card, .nav-item').forEach(el => {
             el.addEventListener('touchstart', () => haptic('light'), { passive: true });
         });
     </script>
