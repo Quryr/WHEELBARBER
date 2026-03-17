@@ -76,7 +76,7 @@
         }
 
         /* ============================================
-           SPLASH SCREEN (АНИМИРОВАННЫЙ ЛОГОТИП)
+           SPLASH SCREEN
            ============================================ */
         .splash {
             position: fixed;
@@ -103,22 +103,19 @@
             flex-direction: column;
             align-items: center;
             position: relative; 
-            transform: scale(0.65); /* Уменьшаем масштаб на 35% для отступов от краев */
+            transform: scale(0.65);
             animation: splashFloat 3s ease-in-out infinite;
         }
 
-        /* Плавное парение (без фильтра, чтобы не портить маску) */
         @keyframes splashFloat {
             0%, 100% { transform: scale(0.65) translateY(0); }
             50% { transform: scale(0.68) translateY(-10px); }
         }
 
-        /* Добавляем неоновое свечение напрямую на SVG */
         .splash-logo-container svg {
             filter: drop-shadow(0 0 12px rgba(255, 107, 0, 0.4));
         }
 
-        /* Анимация: резкое смыкание (снэп) и раскрытие ножниц */
         @keyframes snipA {
             0%, 100% { transform: rotate(4deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
             50% { transform: rotate(-12deg); animation-timing-function: cubic-bezier(0.8, 0, 0.2, 1); }
@@ -139,9 +136,8 @@
             animation: snipB 1.8s infinite;
         }
 
-        /* Маска, которая перекрывает нижнее колесо при анимации */
         .splash-text-wrapper {
-            background-color: var(--bg-primary); /* Сливается с фоном, закрывая SVG */
+            background-color: var(--bg-primary);
             position: relative;
             z-index: 10;
             width: 100%;
@@ -155,11 +151,10 @@
             font-size: 32px;
             letter-spacing: 8px;
             font-weight: 800;
-            margin-left: 8px; /* Выравнивание с учетом letter-spacing */
+            margin-left: 8px;
             text-shadow: 0 0 20px var(--orange-glow);
         }
 
-        /* Красивая неоновая полоса загрузки */
         .splash-line {
             width: 140px;
             height: 4px;
@@ -229,16 +224,13 @@
         }
 
         /* ============================================
-           MAIN CONTENT WRAPPER
+           MAIN CONTENT WRAPPER & SECTIONS
            ============================================ */
         .content {
             position: relative;
             z-index: 1;
         }
 
-        /* ============================================
-           SECTION STYLES
-           ============================================ */
         .section {
             padding: 60px 20px;
             position: relative;
@@ -269,7 +261,6 @@
             margin-bottom: 32px;
         }
 
-        /* Animate on scroll */
         .animate-in {
             opacity: 0;
             transform: translateY(30px);
@@ -401,13 +392,8 @@
             overflow: hidden;
         }
 
-        .btn i {
-            font-size: 18px;
-        }
-
-        .btn:active {
-            transform: scale(0.96);
-        }
+        .btn i { font-size: 18px; }
+        .btn:active { transform: scale(0.96); }
 
         .btn-primary {
             background: linear-gradient(135deg, var(--orange-neon), var(--orange-bright));
@@ -427,9 +413,7 @@
             transition: left 0.5s;
         }
 
-        .btn-primary:active::before {
-            left: 100%;
-        }
+        .btn-primary:active::before { left: 100%; }
 
         @keyframes btnPulse {
             0%, 100% { box-shadow: 0 4px 20px var(--orange-glow), 0 0 40px rgba(255, 107, 0, 0.1); }
@@ -442,15 +426,7 @@
             border: 2px solid var(--orange-subtle);
         }
 
-        .btn-outline:active {
-            background: var(--orange-faint);
-        }
-
-        .btn-small {
-            padding: 10px 20px;
-            font-size: 13px;
-            border-radius: var(--radius-sm);
-        }
+        .btn-outline:active { background: var(--orange-faint); }
 
         /* ============================================
            HOW IT WORKS - TIMELINE
@@ -476,9 +452,7 @@
             padding-left: 20px;
         }
 
-        .timeline-item:last-child {
-            margin-bottom: 0;
-        }
+        .timeline-item:last-child { margin-bottom: 0; }
 
         .timeline-dot {
             position: absolute;
@@ -543,12 +517,10 @@
             line-height: 1.5;
         }
 
-        .quote-box p span {
-            color: var(--orange);
-        }
+        .quote-box p span { color: var(--orange); }
 
         /* ============================================
-           EQUIPMENT GRID
+           EQUIPMENT & FEATURES
            ============================================ */
         .equipment-grid {
             display: grid;
@@ -604,13 +576,8 @@
             line-height: 1.6;
         }
 
-        .info-note strong {
-            color: var(--orange);
-        }
+        .info-note strong { color: var(--orange); }
 
-        /* ============================================
-           ABOUT / FEATURES
-           ============================================ */
         .features-list {
             display: flex;
             flex-direction: column;
@@ -678,6 +645,7 @@
             align-items: center;
             justify-content: center;
             font-size: 40px;
+            overflow: hidden; /* For image upload styling */
         }
 
         .barber-badge {
@@ -712,15 +680,13 @@
             display: flex;
             gap: 8px;
             overflow-x: auto;
-            padding: 15px 5px; /* Added padding to prevent box-shadow clipping */
-            margin: -15px -5px 15px -5px; /* Offset padding to maintain layout */
+            padding: 15px 5px; 
+            margin: -15px -5px 15px -5px; 
             scrollbar-width: none;
             -ms-overflow-style: none;
         }
 
-        .portfolio-filters::-webkit-scrollbar {
-            display: none;
-        }
+        .portfolio-filters::-webkit-scrollbar { display: none; }
 
         .filter-btn {
             flex-shrink: 0;
@@ -735,7 +701,6 @@
             cursor: pointer;
             transition: var(--transition);
             white-space: nowrap;
-            /* Fix font jittering / pixelation on click/active */
             transform: translateZ(0);
             backface-visibility: hidden;
             -webkit-font-smoothing: antialiased;
@@ -805,7 +770,7 @@
             color: var(--text-muted);
         }
 
-        /* Admin delete button */
+        /* Admin Action Buttons */
         .portfolio-delete {
             position: absolute;
             top: 8px;
@@ -825,7 +790,6 @@
             backdrop-filter: blur(10px);
         }
 
-        /* Admin add button */
         .admin-add-btn {
             display: flex;
             align-items: center;
@@ -846,13 +810,8 @@
             transition: var(--transition);
         }
         
-        .admin-add-btn i {
-            font-size: 18px;
-        }
-
-        .admin-add-btn:active {
-            transform: scale(0.97);
-        }
+        .admin-add-btn i { font-size: 18px; }
+        .admin-add-btn:active { transform: scale(0.97); }
 
         /* Skeleton Loading */
         .skeleton {
@@ -918,12 +877,7 @@
             white-space: nowrap;
         }
 
-        /* Admin Actions */
-        .admin-actions-inline {
-            display: none;
-            gap: 8px;
-        }
-
+        .admin-actions-inline { display: none; gap: 8px; }
         .price-admin-actions {
             display: none;
             gap: 8px;
@@ -978,7 +932,7 @@
         }
 
         /* ============================================
-           DISTRICTS
+           DISTRICTS & FAQ
            ============================================ */
         .districts-grid {
             display: grid;
@@ -1003,9 +957,7 @@
             gap: 14px;
         }
 
-        .district-card:active {
-            border-color: var(--orange-subtle);
-        }
+        .district-card:active { border-color: var(--orange-subtle); }
 
         .district-pin {
             width: 40px;
@@ -1025,9 +977,6 @@
             font-weight: 700;
         }
 
-        /* ============================================
-           FAQ ACCORDION
-           ============================================ */
         .faq-list {
             display: flex;
             flex-direction: column;
@@ -1042,9 +991,7 @@
             transition: var(--transition);
         }
 
-        .faq-item.open {
-            border-color: var(--orange-subtle);
-        }
+        .faq-item.open { border-color: var(--orange-subtle); }
 
         .faq-question {
             display: flex;
@@ -1083,9 +1030,7 @@
             transition: max-height 0.3s ease, padding 0.3s ease;
         }
 
-        .faq-item.open .faq-answer {
-            max-height: 200px;
-        }
+        .faq-item.open .faq-answer { max-height: 200px; }
 
         .faq-answer-inner {
             padding: 0 20px 18px;
@@ -1095,7 +1040,7 @@
         }
 
         /* ============================================
-           CTA SECTION
+           CTA & FOOTER
            ============================================ */
         .cta-section {
             text-align: center;
@@ -1140,9 +1085,6 @@
             position: relative;
         }
 
-        /* ============================================
-           FOOTER
-           ============================================ */
         .footer {
             text-align: center;
             padding: 32px 20px 100px;
@@ -1154,9 +1096,7 @@
             margin-bottom: 8px;
         }
 
-        .footer-logo span {
-            color: var(--orange);
-        }
+        .footer-logo span { color: var(--orange); }
 
         .footer-copy {
             font-size: 12px;
@@ -1211,12 +1151,10 @@
             filter: drop-shadow(0 0 8px var(--orange-glow));
         }
 
-        .nav-item.active .nav-label {
-            color: var(--orange);
-        }
+        .nav-item.active .nav-label { color: var(--orange); }
 
         /* ============================================
-           MODAL / LIGHTBOX
+           MODALS (LIGHTBOX & FORMS)
            ============================================ */
         .modal-overlay {
             position: fixed;
@@ -1234,9 +1172,7 @@
             animation: fadeIn 0.3s ease;
         }
 
-        .modal-overlay.show {
-            display: flex;
-        }
+        .modal-overlay.show { display: flex; }
 
         @keyframes fadeIn {
             from { opacity: 0; }
@@ -1261,7 +1197,6 @@
             z-index: 10;
         }
 
-        /* Lightbox */
         .lightbox-img {
             max-width: 100%;
             max-height: 80vh;
@@ -1269,7 +1204,6 @@
             object-fit: contain;
         }
 
-        /* Upload Modal */
         .upload-modal {
             width: 100%;
             max-width: 400px;
@@ -1288,9 +1222,7 @@
             text-align: center;
         }
 
-        .upload-modal h3 span {
-            color: var(--orange);
-        }
+        .upload-modal h3 span { color: var(--orange); }
 
         .upload-area {
             border: 2px dashed var(--orange-subtle);
@@ -1363,9 +1295,7 @@
             justify-content: center;
         }
 
-        .form-group {
-            margin-bottom: 16px;
-        }
+        .form-group { margin-bottom: 16px; }
 
         .form-group label {
             display: block;
@@ -1423,9 +1353,7 @@
             display: none;
         }
 
-        .upload-progress.show {
-            display: block;
-        }
+        .upload-progress.show { display: block; }
 
         .upload-progress-bar {
             height: 100%;
@@ -1435,29 +1363,20 @@
             width: 0%;
         }
 
-        /* ============================================
-           UTILITY CLASSES
-           ============================================ */
         .text-orange { color: var(--orange); }
         .text-center { text-align: center; }
         .mt-12 { margin-top: 12px; }
         .mt-24 { margin-top: 24px; }
         .mb-24 { margin-bottom: 24px; }
 
-        /* Hide admin elements by default */
-        .admin-only {
-            display: none;
-        }
-
-        body.is-admin .admin-only {
-            display: flex;
-        }
+        .admin-only { display: none; }
+        body.is-admin .admin-only { display: flex; }
     </style>
 </head>
 <body>
 
     <!-- ==========================================
-         SPLASH SCREEN (АНИМИРОВАННЫЙ ЛОГОТИП)
+         SPLASH SCREEN
          ========================================== -->
     <div class="splash" id="splash">
         <div class="splash-logo-container">
@@ -1465,13 +1384,13 @@
                  stroke="var(--orange-bright)" stroke-width="12"
                  stroke-linecap="round" stroke-linejoin="round" fill="none">
         
-                <!-- ДЕТАЛЬ 2: Нижнее колесо и Верхнее лезвие -->
+                <!-- ДЕТАЛЬ 2 -->
                 <g id="pieceB">
                     <line x1="90" y1="155" x2="315" y2="50" />
                     <circle cx="110" cy="179" r="35" fill="var(--bg-primary)" />
                 </g>
         
-                <!-- ДЕТАЛЬ 1: Верхняя голова и Нижнее лезвие -->
+                <!-- ДЕТАЛЬ 1 -->
                 <g id="pieceA">
                     <line x1="90" y1="85" x2="165" y2="120" />
                     <line x1="200" y1="136.3" x2="315" y2="190" />
@@ -1479,7 +1398,6 @@
                 </g>
             </svg>
         
-            <!-- Блок с текстом и маской для нижнего колеса -->
             <div class="splash-text-wrapper">
                 <div class="splash-text">WHEELBARBER</div>
                 <div class="splash-line"></div>
@@ -1496,14 +1414,9 @@
          BACKGROUND PARTICLES
          ========================================== -->
     <div class="particles">
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
-        <div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div><div class="particle"></div>
+        <div class="particle"></div><div class="particle"></div>
     </div>
 
     <!-- ==========================================
@@ -1521,7 +1434,6 @@
                 Теперь профессиональная мужская стрижка может быть прямо у тебя дома.
             </p>
             <div class="hero-buttons">
-                <!-- ССЫЛКА НА GOOGLE CALENDAR И ИКОНКА SCISSORS -->
                 <a href="https://calendar.app.google/d3LC7DGE1F7FjoW88" class="btn btn-primary book-btn">
                     <i class="ph-fill ph-scissors"></i> Записаться на стрижку
                 </a>
@@ -1659,7 +1571,7 @@
             </button>
 
             <div class="barber-card animate-in">
-                <div class="barber-avatar"><i class="ph-fill ph-scissors"></i></div>
+                <div class="barber-avatar" id="barberAvatarContainer"><i class="ph-fill ph-scissors"></i></div>
                 <div class="barber-badge"><i class="ph-fill ph-star"></i> Опыт работы: 3 года</div>
                 <h3 class="barber-name" id="barberNameDisplay">Мастер мужских стрижек</h3>
                 <p class="barber-desc">
@@ -1951,8 +1863,20 @@
                 <label>Должность / Статус</label>
                 <input type="text" id="barberRoleInput" placeholder="Например: Мастер мужских стрижек">
             </div>
+            
+            <div class="form-group">
+                <label>Фото барбера</label>
+                <div class="upload-area" id="barberPhotoUploadArea" style="padding: 16px;">
+                    <div class="upload-icon" style="font-size: 24px; margin-bottom: 4px;"><i class="ph-fill ph-camera"></i></div>
+                    <div class="upload-text" style="font-size: 12px;">Выбрать фото (одно)</div>
+                </div>
+                <input type="file" id="barberPhotoInput" accept="image/*" style="display:none;">
+                <div style="text-align: center;">
+                    <img id="barberPhotoPreview" src="" alt="Предпросмотр" style="display:none; width: 100px; height: 100px; border-radius: 50%; object-fit: cover; margin: 0 auto; border: 2px solid var(--orange);">
+                </div>
+            </div>
 
-            <button class="btn btn-primary" style="width:100%;" onclick="saveBarberInfo()" id="barberSubmitBtn">
+            <button class="btn btn-primary" style="width:100%; margin-top: 10px;" onclick="saveBarberInfo()" id="barberSubmitBtn">
                 <i class="ph-bold ph-check"></i> Сохранить
             </button>
         </div>
@@ -1968,7 +1892,6 @@
         const ADMIN_IDS = [1262669099, 5215828279];
         const PHONE_NUMBER = '+79514469597';
 
-        // Изначальный список услуг, если БД пустая
         const DEFAULT_SERVICES = [
             { name: "Стрижка машинкой", price: 1000, order: 1 },
             { name: "Классическая стрижка", price: 1400, order: 2 },
@@ -1977,17 +1900,16 @@
             { name: "Оформление бороды", price: 1000, order: 5 }
         ];
 
-        // Изначальный список районов
         const DEFAULT_DISTRICTS = [
             { name: "Калининский", order: 1 },
             { name: "Парковый", order: 2 },
             { name: "Центральный", order: 3 }
         ];
 
-        // Изначальный профиль барбера
-        const DEFAULT_BARBER = {
+        let currentBarberData = {
             name: "Анна",
-            role: "Мастер мужских стрижек"
+            role: "Мастер мужских стрижек",
+            imageUrl: null
         };
 
         // Firebase Configuration
@@ -2004,7 +1926,6 @@
         /* ============================================
            INITIALIZE
            ============================================ */
-        // Firebase Init
         let db, storage;
         let firebaseReady = false;
 
@@ -2013,7 +1934,6 @@
             db = firebase.firestore();
             storage = firebase.storage();
             
-            // Анонимная авторизация для обхода правил Firebase (если они требуют auth != null)
             firebase.auth().signInAnonymously().catch(e => console.warn('Auth error:', e));
             
             firebaseReady = true;
@@ -2021,7 +1941,6 @@
             console.warn('Firebase init error:', e);
         }
 
-        // Telegram WebApp Init
         const tg = window.Telegram?.WebApp;
         let isAdmin = false;
         let currentUserId = null;
@@ -2056,7 +1975,7 @@
         window.addEventListener('load', () => {
             setTimeout(() => {
                 document.getElementById('splash').classList.add('hidden');
-            }, 2500); // Немного увеличил время для красивой анимации ножниц
+            }, 2500);
 
             loadPortfolio();
             loadPricing();
@@ -2173,13 +2092,11 @@
             });
         });
 
-        // Update phone links + iOS Fix via JS Native redirect instead of direct link execution
         document.querySelectorAll('[href^="tel:"]').forEach(link => {
             link.href = `tel:${PHONE_NUMBER}`;
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 haptic('light');
-                // Telegram WebApp iOS Safari fix - trigger redirection manually
                 if (tg && tg.openLink) {
                     try {
                         tg.openLink(`tel:${PHONE_NUMBER}`);
@@ -2197,35 +2114,54 @@
            ============================================ */
         async function loadBarberInfo() {
             if (!firebaseReady) {
-                renderBarberInfo(DEFAULT_BARBER);
+                renderBarberInfo(currentBarberData);
                 return;
             }
             try {
                 const doc = await db.collection('settings').doc('barberProfile').get();
                 if (!doc.exists) {
-                    await db.collection('settings').doc('barberProfile').set(DEFAULT_BARBER);
-                    renderBarberInfo(DEFAULT_BARBER);
+                    await db.collection('settings').doc('barberProfile').set(currentBarberData);
+                    renderBarberInfo(currentBarberData);
                 } else {
-                    renderBarberInfo(doc.data());
+                    currentBarberData = doc.data();
+                    renderBarberInfo(currentBarberData);
                 }
             } catch(e) {
                 console.error("Error loading barber info", e);
-                renderBarberInfo(DEFAULT_BARBER);
+                renderBarberInfo(currentBarberData);
             }
         }
 
         function renderBarberInfo(data) {
             const titleEl = document.getElementById('barberNameTitle');
             const displayEl = document.getElementById('barberNameDisplay');
+            const avatarContainer = document.getElementById('barberAvatarContainer');
+
             if (titleEl) titleEl.textContent = data.name || 'Анна';
             if (displayEl) displayEl.textContent = data.role || 'Мастер мужских стрижек';
+            
+            if (data.imageUrl) {
+                avatarContainer.innerHTML = `<img src="${data.imageUrl}" alt="Барбер" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                avatarContainer.style.background = 'transparent';
+            } else {
+                avatarContainer.innerHTML = `<i class="ph-fill ph-scissors"></i>`;
+                avatarContainer.style.background = 'var(--bg-secondary)';
+            }
         }
 
         function openBarberModal() {
-            const currentName = document.getElementById('barberNameTitle').textContent;
-            const currentRole = document.getElementById('barberNameDisplay').textContent;
-            document.getElementById('barberNameInput').value = currentName;
-            document.getElementById('barberRoleInput').value = currentRole;
+            document.getElementById('barberNameInput').value = currentBarberData.name || '';
+            document.getElementById('barberRoleInput').value = currentBarberData.role || '';
+            
+            document.getElementById('barberPhotoInput').value = '';
+            const preview = document.getElementById('barberPhotoPreview');
+            if (currentBarberData.imageUrl) {
+                preview.src = currentBarberData.imageUrl;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+
             document.getElementById('barberModal').classList.add('show');
             haptic('medium');
         }
@@ -2238,9 +2174,24 @@
             if (e.target === e.currentTarget) closeBarberModal();
         });
 
+        // Barber Photo Upload Listeners
+        document.getElementById('barberPhotoUploadArea').addEventListener('click', () => {
+            document.getElementById('barberPhotoInput').click();
+        });
+
+        document.getElementById('barberPhotoInput').addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const url = URL.createObjectURL(e.target.files[0]);
+                const preview = document.getElementById('barberPhotoPreview');
+                preview.src = url;
+                preview.style.display = 'block';
+            }
+        });
+
         async function saveBarberInfo() {
             const name = document.getElementById('barberNameInput').value.trim();
             const role = document.getElementById('barberRoleInput').value.trim();
+            const fileInput = document.getElementById('barberPhotoInput');
 
             if (!name) {
                 if (tg) tg.showAlert('Пожалуйста, введите имя барбера');
@@ -2255,13 +2206,46 @@
             btn.innerHTML = '<i class="ph-bold ph-spinner"></i> Сохранение...';
 
             try {
-                await db.collection('settings').doc('barberProfile').set({ name, role }, { merge: true });
+                let imageUrl = currentBarberData.imageUrl || null;
+
+                // Загружаем картинку, если выбрана новая
+                if (fileInput.files.length > 0) {
+                    const file = fileInput.files[0];
+                    const compressedFile = await compressImage(file, 800, 0.8);
+                    const timestamp = Date.now();
+                    const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
+                    const storagePath = `barber_profiles/${timestamp}_${safeName}`;
+                    const storageRef = storage.ref(storagePath);
+
+                    const uploadTask = storageRef.put(compressedFile, { contentType: 'image/jpeg' });
+                    
+                    // Таймаут на загрузку аватарки
+                    const uploadPromise = new Promise((resolve, reject) => {
+                        uploadTask.on('state_changed', null, error => reject(error), () => resolve());
+                    });
+                    const timeoutPromise = new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Таймаут загрузки. Проверьте правила Storage.')), 45000)
+                    );
+
+                    await Promise.race([uploadPromise, timeoutPromise]);
+                    imageUrl = await storageRef.getDownloadURL();
+                }
+
+                const updateData = { name, role };
+                if (imageUrl) {
+                    updateData.imageUrl = imageUrl;
+                }
+
+                await db.collection('settings').doc('barberProfile').set(updateData, { merge: true });
+                
                 haptic('success');
                 closeBarberModal();
                 loadBarberInfo();
             } catch(e) {
                 console.error(e);
                 haptic('error');
+                if (tg) tg.showAlert('Ошибка: ' + e.message);
+                else alert('Ошибка: ' + e.message);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="ph-bold ph-check"></i> Сохранить';
@@ -2791,9 +2775,8 @@
                         );
                     });
 
-                    // Таймаут 45 секунд, чтобы не ждать бесконечно
                     const timeoutPromise = new Promise((_, reject) => 
-                        setTimeout(() => reject(new Error('Таймаут загрузки. Проверьте интернет или настройки базы данных.')), 45000)
+                        setTimeout(() => reject(new Error('Таймаут загрузки. Проверьте правила Storage (см. инструкцию выше).')), 45000)
                     );
 
                     await Promise.race([uploadPromise, timeoutPromise]);
